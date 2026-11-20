@@ -240,7 +240,7 @@ function finishWave(){waveSpawned=waveTotal;for(const z of Z){if(!z.dead){z.hp=0
 let Pk=[],Sp=[],streak=0,streakT=0,rec={bestWave:0,bestKills:0,bestMoney:0},tileHp={};
 const K={l:0,r:0,u:0,d:0,sh:0},PD={x:0,y:0,rx:0,ry:0,fire:0,run:0,rl:0,start:0};
 const toast=t=>{$('toast').textContent=t;clearTimeout(tt);tt=setTimeout(()=>$('toast').textContent='',1800)};
-function newGame(){P={x:20*T,y:16*T,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();sc.clearRect(0,0,MW*T,MH*T);$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=true;startWave(1);$('wrap').focus()}
+function newGame(){P={x:20*T,y:16*T,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();sc.clearRect(0,0,MW*T,MH*T);$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=true;startWave(1);$('wrap').focus()}
 /* ---------- OLEADAS (dificultad Normal: crece de forma constante) ---------- */
 /* Oleada n trae 6+n*4 zombis (10, 14, 18...), aparecen más rápido y más
    juntos cuanto más alta es la oleada; los corredores e hinchados son
@@ -334,16 +334,18 @@ function drawCharPreview(cv,o){const c=cv.getContext('2d');if(!c)return;c.imageS
 function renderCharSel(){const c=$('charSel');if(!c)return;c.innerHTML='';CHARS.forEach((o,i)=>{const d=document.createElement('div');d.className='char-opt'+(i===charIdx?' sel':'');const cv=document.createElement('canvas');cv.width=48;cv.height=64;d.appendChild(cv);drawCharPreview(cv,o);const nm=document.createElement('span');nm.textContent=o.n;d.appendChild(nm);d.onclick=()=>selectChar(i);c.appendChild(d)})}
 /* ---------- RELOJ, CLIMA Y CICLO DÍA/NOCHE ---------- */
 /* 1 s real = 10 min de juego (un día completo = 144 s reales). */
-let gameMin=420,clockVisible=true,weather='sunny',wxT=25,Wx=[];
+let gameMin=420,clockVisible=true,weather='sunny',wxT=25,Wx=[],wxAcc=0;
 let thunderT=rr(8,18),flash=0,bolt=null;let wxWheelOpen=false,timePanelOpen=false,wxWheelFrom='play',timePrevSt='play',timeEditH=7,timeEditM=0;
 function fmtTime(){return String(Math.floor(gameMin/60)%24).padStart(2,'0')+':'+String(Math.floor(gameMin)%60).padStart(2,'0')}
-function pickWeather(){const r=Math.random();weather=r<.5?'sunny':r<.85?'rain':'snow';setRainSound()}
+function pickWeather(){const r=Math.random();weather=r<.5?'sunny':r<.85?'rain':'snow';seedWx();setRainSound()}
+/* Lluvia continua (sin tandas): cada gota tiene su propia velocidad y nace en una altura al azar de toda la pantalla, no solo arriba. Al cambiar el clima se siembra la pantalla entera de gotas/copos para no esperar a que caigan desde arriba. */
+function seedWx(){Wx.length=0;wxAcc=0;if(weather==='rain'){for(let i=0;i<180;i++)Wx.push({x:camX+rr(0,VW),y:camY+rr(-10,VH+10),vx:-30,vy:rr(420,620),k:'r'})}else if(weather==='snow'){for(let i=0;i<150;i++)Wx.push({x:camX+rr(0,VW),y:camY+rr(-10,VH+10),vx:rr(-15,15),vy:rr(30,60),k:'s'})}}
 function dayLight(){const h=gameMin/60,KF=[[0,.55,0],[5,.55,0],[7,.12,.12],[9,.02,0],[16,0,0],[18,.12,.18],[20,.4,.06],[22,.55,0],[24,.55,0]];let a=KF[0],b=KF[KF.length-1];for(let i=0;i<KF.length-1;i++){if(h>=KF[i][0]&&h<=KF[i+1][0]){a=KF[i];b=KF[i+1];break}}const t=(h-a[0])/((b[0]-a[0])||1);return{dark:a[1]+(b[1]-a[1])*t,warm:a[2]+(b[2]-a[2])*t}}
 /* ---------- RUEDA DE CLIMA (F12) Y PANEL DE HORA (F11) — modo DIOS ---------- */
 /* F11 y F12 son atajos fijos del modo DIOS (no reasignables, ya están en
    FORBIDDEN_KEYS); el juego se pausa mientras la rueda o el panel están
    abiertos, para que los enemigos no molesten. */
-function setWeather(w){weather=w;wxT=rr(20,50);setRainSound()}
+function setWeather(w){weather=w;wxT=rr(20,50);seedWx();setRainSound()}
 function openWxWheel(){if(!godMode||wxWheelOpen||timePanelOpen)return;if(st!=='play'&&st!=='shop')return;wxWheelFrom=st;st='wxwheel';wxWheelOpen=true;$('wxWheel').hidden=false}
 function closeWxWheel(){if(!wxWheelOpen)return;wxWheelOpen=false;$('wxWheel').hidden=true;st=wxWheelFrom}
 function fmtHM(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')}
@@ -499,9 +501,9 @@ function upd(dt){pad();
  let ix=(K.r-K.l)+PD.x,iy=(K.d-K.u)+PD.y;const m=Math.hypot(ix,iy);if(m>1){ix/=m;iy/=m}
  const moving=m>.1,run=(K.sh||PD.run)&&moving&&(godMode||P.st>0);P.sd-=dt;if(run){if(!godMode)P.st=Math.max(0,P.st-28*dt);P.sd=.6}else if(P.sd<=0)P.st=Math.min(100,P.st+22*dt);
  gameMin=(gameMin+dt/5)%1440;wxT-=dt;if(wxT<=0){pickWeather();wxT=rr(20,50)}
- if(weather==='rain'){for(let i=0;i<4&&Wx.length<200;i++)Wx.push({x:camX+rr(0,VW),y:camY-8,vx:-30,vy:520,k:'r'});thunderT-=dt;if(thunderT<=0){thunderT=rr(6,20);flash=.9;bolt=makeBolt();sThunder()}}
+ if(weather==='rain'){wxAcc+=dt*480;while(wxAcc>=1&&Wx.length<300){wxAcc--;Wx.push({x:camX+rr(0,VW),y:camY+rr(-10,VH+10),vx:-30,vy:rr(420,620),k:'r'})}thunderT-=dt;if(thunderT<=0){thunderT=rr(6,20);flash=.9;bolt=makeBolt();sThunder()}}
  if(flash>0)flash=Math.max(0,flash-dt*2.5);
- else if(weather==='snow'){for(let i=0;i<2&&Wx.length<200;i++)Wx.push({x:camX+rr(0,VW),y:camY-8,vx:rr(-15,15),vy:rr(30,60),k:'s'})}
+ if(weather==='snow'){wxAcc+=dt*150;while(wxAcc>=1&&Wx.length<200){wxAcc--;Wx.push({x:camX+rr(0,VW),y:camY+rr(-10,VH+10),vx:rr(-15,15),vy:rr(30,60),k:'s'})}}
  for(let i=Wx.length-1;i>=0;i--){const w=Wx[i];w.x+=w.vx*dt;w.y+=w.vy*dt;if(w.y>camY+VH+10)Wx.splice(i,1)}
  const dashing=P.dashT>0;if(P.dashCd>0)P.dashCd-=dt;if(dashing)P.dashT-=dt;
  if(dashing){mv(P,P.dashX*520*dt,0);mv(P,0,P.dashY*520*dt);Pa.push({x:P.x,y:P.y-12,vx:0,vy:0,l:.25,c:'#7ab8e8',s:3})}
