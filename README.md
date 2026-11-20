@@ -21,10 +21,12 @@ Al arrancar sale el menú inicial: elige uno de los 5 personajes y pulsa JUGAR. 
 - **P o Esc** — Pausa
 - **M** — Silenciar sonido
 - **G** — Gore intenso / reducido
-- **TAB** — Mostrar / ocultar el reloj del juego
+- **TAB** — Mostrar / ocultar el reloj del juego (también en OPCIONES)
 - **Caps Lock** — Modo DIOS (activar / desactivar)
 - **FIN (End)** — En modo DIOS, acaba la oleada al instante
 - **Re-Pág / Av-Pág** — En modo DIOS, +$100 / -$100 de dinero
+- **F12** — En modo DIOS, rueda de clima (sol, lluvia o nieve); pausa el juego
+- **F11** — En modo DIOS, cambiar la hora y los minutos; pausa el juego (ESC cancela)
 
 Mando Xbox: stick izquierdo mover, stick derecho apuntar, RT disparar, X recargar, B correr, Start pausa.
 
@@ -40,15 +42,17 @@ Para reasignar una tecla: en CONTROLES, haz clic en la tecla (parpadea) y pulsa 
 - Barriles explosivos, cajas de madera y de metal rompibles (a puños o a balas), objetos que caen al morir.
 - Récords guardados en el navegador (mejor oleada, más abatidos, más dinero).
 - Modo DIOS (Caps Lock): invencible, munición infinita y sin estamina (siempre se corre). Con FIN se acaba la oleada.
-- Clima aleatorio: soleado, lluvioso y con nieve (la nieve es la más escasa); cambia solo cada cierto tiempo.
-- Ciclo día/noche: 1 segundo real = 10 minutos de juego (un día completo = 144 s). La luz cambia: día claro, noche oscura, amanecer y atardecer cálidos.
-- Reloj del juego en el HUD, debajo de los zombis que quedan (TAB lo muestra/oculta), con icono de sol/luna y del clima.
+- Clima aleatorio: soleado, lluvioso y con nieve (la nieve es la más escasa); cambia solo cada cierto tiempo. Con lluvia caen truenos y rayos (resplandor blanco + retumbo) y se oye la lluvia de fondo, bajito.
+- Ciclo día/noche: cada día empieza a las 7:00 y 1 minuto de juego = 5 segundos reales (el reloj avanza despacio, sin distraer). La luz cambia: día claro, noche oscura, amanecer y atardecer cálidos.
+- Reloj del juego en el HUD, debajo de los zombis que quedan (TAB lo muestra/oculta, también en OPCIONES), con icono de sol/luna y del clima.
+- Modo DIOS: F12 abre la rueda de clima para elegir sol, lluvia o nieve cuando quieras; F11 abre el panel para cambiar la hora y los minutos (flechas, botones rápidos 07:00/12:00/18:00/00:00, ACEPTAR o CANCELAR). Ambas pausan el juego mientras están abiertas.
 - 5 personajes elegibles al inicio (CLÁSICO, ROJO, RUBIO, GORRA, VIOLETA), con distinta ropa, pelo y color.
 
 ## Historial de versiones
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| v2026-11-20d | 2026-11-20 | Sin el texto del menú ("Oleadas, dinero y tienda"). Reloj lento: cada día empieza a las 7:00, 1 min de juego = 5 s reales; opción de mostrar/ocultar el reloj en OPCIONES (además de TAB). Modo DIOS: F12 abre la rueda de clima (sol/lluvia/nieve, pausa el juego) y F11 el panel para cambiar la hora y minutos (flechas + botones rápidos, ESC cancela). Truenos y rayos aleatorios con lluvia (resplandor blanco + rayo dibujado + retumbo) y sonido de lluvia de fondo bajito. 316 pruebas. |
 | v2026-11-20c | 2026-11-20 | Renombrado a THE LAST WAVE. Sonidos reales de puño (punch1/punch2 de Stiven). Modo DIOS: Re-Pág +$100, Av-Pág -$100, sin estamina. Teclas reasignables (correr=Espacio, dash=Shift por defecto; captura con parpadeo, ESC/ENTER cancelan, F1-F12 prohibidas, intercambio si se repite, guardado). Clima aleatorio (sol/lluvia/nieve, nieve escasa). Ciclo día/noche (1 s = 10 min). Reloj con TAB debajo de los zombis que quedan. HUD del arma sin fondo negro ni "RESERVA" (solo icono de bala, más grande). Sin textos de controles in-game. Menú inicial con JUGAR/CONTROLES/OPCIONES/SALIR + selector de 5 personajes. Icono del puño rehecho. 285 pruebas. |
 | v2026-11-20b | 2026-11-20 | Jefe cada 5 oleadas (el de la captura era el jefe en la oleada 3, por el cambio a cada 3); tanque ahora azul acero con placa (antes morado, se confundía con el jefe). Sonido de subfusil recortado a un disparo de 0,18 s + pool de 4 audios (antes se cortaba). Sonidos de puño (2, se alternan, suenan siempre). Explosión de barril con fuego y humo; daño por explosión radio 70 → 80 px. Cajas sueltan astillas/esquirlas/chispas. Rueda del ratón llega al puño. 225 pruebas. |
 | v2026-11-20 | 2026-11-20 | Modo DIOS (Caps Lock, invencible, munición infinita, FIN acaba la oleada, indicador GOD MODE). Puño cuerpo a cuerpo en la ranura 0, barra de 6 ranuras. Durabilidad: caja de madera 2, metal 4, barril 5. Sonidos reales de pistola, escopeta y subfusil + sin munición. Más dinero por zombi según dificultad. 207 pruebas. |
