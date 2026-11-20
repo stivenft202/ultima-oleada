@@ -450,7 +450,7 @@ function barrelBoom(tx,ty){const x=tx*T+16,y=ty*T+16;M[ty][tx]=0;paintTile(tx,ty
  for(const z of Z){if(!z.dead&&Math.hypot(z.x-x,z.y-y)<80){const d=Math.hypot(z.x-x,z.y-y);z.hp-=120;z.f=.15;if(z.hp<=0){z.dead=1;z.lastW=1;z.kb={vx:(z.x-x)*3,vy:(z.y-y)*3}}else if(d<40)tryDismemberZombie(z,1,true);else tryDismemberZombie(z,1,false)}}
  /* El jugador también puede ser desmembrado por la explosión: muy raro,
     pero más probable si tiene poca salud. La explosión no le quita vida. */
- if(!godMode&&!P.dead&&!P.dying&&Math.hypot(P.x-x,P.y-y)<80){const p=P.hp<30?0.15:0.03;if(Math.random()<p)startDismemberDeath(Math.random()<0.5?'arm':'leg')}
+ if(!godMode&&!P.dead&&!P.dying&&Math.hypot(P.x-x,P.y-y)<80){const p=P.hp<30?0.25:0.06;if(Math.random()<p)startDismemberDeath(Math.random()<0.5?'arm':'leg')}
  for(let i=0;i<22;i++){const a=rr(0,6.28),s=rr(30,160);Pa.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-60,l:rr(.3,.7),c:['#ffd166','#e8742c','#c0283a','#ff9a3a'][i%4],s:rr(3,6),k:'f'})}
  for(let i=0;i<12;i++)Pa.push({x:x+rr(-14,14),y:y+rr(-10,10),vx:rr(-15,15),vy:rr(-40,-15),l:rr(.8,1.6),c:['#5a5a5a','#7a7a7a','#3a3a3a','#8a8a8a'][i%4],s:rr(4,7),k:'s'});
  blood(x,y,0,0,20,1);stamp(x,y,20,'#8a1020');shake=12;sBoom()}
@@ -485,14 +485,15 @@ function spawnLimb(x,y,kind,col,skin){
   const a=rr(0,6.28),sp=rr(120,260);
   Limbs.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-80,rot:rr(0,6.28),vr:rr(-9,9),kind,col,skin,t:0,landed:false});
 }
-function updateLimbs(dt){for(const L of Limbs){if(L.landed)continue;L.t+=dt;L.x+=L.vx*dt;L.y+=L.vy*dt;L.rot+=L.vr*dt;L.vx*=.92;L.vy*=.92;if(L.t>.7){L.landed=true;L.vx=0;L.vy=0}}}
+function updateLimbs(dt){for(const L of Limbs){if(L.landed)continue;L.t+=dt;L.x+=L.vx*dt;L.y+=L.vy*dt;L.rot+=L.vr*dt;L.vx*=.92;L.vy*=.92;if(L.t>.7){L.landed=true;L.vx=0;L.vy=0;stamp(L.x,L.y,6,'#6e0c18')}}}
 /* Probabilidad de desmembrar a un zombi: base + arma (escopeta/rifle más,
-   puño menos) + tipo (normales fácil, tanque/jefe difícil). */
+   puño menos) + tipo (normales fácil, tanque/jefe difícil). En una partida
+   normal se ve en roughly 1 de cada 2-3 muertes. */
 function dismemberChance(z,w){
-  let c=0.14;
-  if(w===1)c+=0.08;else if(w===3)c+=0.10;else if(w===4)c-=0.05;
-  if(z.t===0||z.t===1)c+=0.05;else if(z.t===4)c+=0.03;else if(z.t===3)c-=0.07;else if(z.t===5)c-=0.10;
-  return Math.max(0.02,Math.min(0.4,c));
+  let c=0.28;
+  if(w===1)c+=0.10;else if(w===3)c+=0.12;else if(w===4)c-=0.03;
+  if(z.t===0||z.t===1)c+=0.05;else if(z.t===4)c+=0.03;else if(z.t===3)c-=0.05;else if(z.t===5)c-=0.08;
+  return Math.max(0.05,Math.min(0.55,c));
 }
 function dismemberPart(z){
   const avail=[];
@@ -510,16 +511,16 @@ function losePart(z,part){
   z.dm[part]=1;
   const skin=z.t===4?'#b8d86a':'#8fa87a',col=part==='head'?skin:(part==='leg'?'#3a3340':'#4d5a55');
   spawnLimb(z.x,z.y-12,part,col,skin);
-  blood(z.x,z.y-12,0,0,14,1);
+  blood(z.x,z.y-12,0,0,20,1);
   if(part==='head'){z.hp=0;z.dead=1;z.kb={vx:0,vy:0}}
   else if(part==='leg'){z.sp*=0.85}
 }
 /* Intenta desmembrar a un zombi. lethal=true al morir (probabilidad
-   completa), false al recibir un golpe no letal (probabilidad x0.3). */
+   completa), false al recibir un golpe no letal (probabilidad x0.5). */
 function tryDismemberZombie(z,w,lethal){
   if(!z.dm)z.dm={arm:0,leg:0,head:0};
   if(z.dm.arm&&z.dm.leg&&z.dm.head)return false;
-  const p=dismemberChance(z,w)*(lethal?1:0.3);
+  const p=dismemberChance(z,w)*(lethal?1:0.5);
   if(Math.random()>=p)return false;
   const part=dismemberPart(z);
   if(!part)return false;
@@ -545,11 +546,11 @@ function startDismemberDeath(part){
   sScream();st='dying';$('hotbar').hidden=true;
 }
 /* Intento de desmembramiento del jugador por un zombi grande o de rango:
-   tanque 8%, jefe 10%, escupidor (ácido) 4%. Solo fuera de GOD MODE. */
+   tanque 12%, jefe 15%, escupidor (ácido) 6%. Solo fuera de GOD MODE. */
 function tryPlayerDismember(z){
   if(godMode||P.dead||P.dying)return false;
   let p=0;
-  if(z.t===3)p=0.08;else if(z.t===5)p=0.10;else if(z.t===4)p=0.04;else return false;
+  if(z.t===3)p=0.12;else if(z.t===5)p=0.15;else if(z.t===4)p=0.06;else return false;
   if(Math.random()>=p)return false;
   startDismemberDeath(Math.random()<0.5?'arm':'leg');
   return true;
@@ -594,8 +595,8 @@ function renderRec(){const t=rec.bestWave>0?('RÉCORD · Oleada '+rec.bestWave+'
 function updateRec(){rec.bestWave=Math.max(rec.bestWave,wave);rec.bestKills=Math.max(rec.bestKills,kills);rec.bestMoney=Math.max(rec.bestMoney,money);saveRec();renderRec()}
 function kill(z,b){blood(z.x,z.y-10,b.vx,b.vy,26,1);stamp(z.x,z.y,rr(14,22),'#6e0c18');stamp(z.x,z.y,8,'#3e0610');
  if(!z.dm)z.dm={arm:0,leg:0,head:0};
- if(!z.dm.arm&&!z.dm.leg&&!z.dm.head)tryDismemberZombie(z,z.lastW||0,true);
- R2(sc,z.x-9,z.y-4,18,7,'#3f4a45');R2(sc,z.x+8,z.y-5,6,6,'#7f9a6a');R2(sc,z.x-9,z.y-4,18,2,'#2a322e');sDie();kills++;
+ tryDismemberZombie(z,z.lastW||0,true);
+ R2(sc,z.x-9,z.y-4,18,7,'#3f4a45');if(!z.dm.head)R2(sc,z.x+8,z.y-5,6,6,'#7f9a6a');R2(sc,z.x-9,z.y-4,18,2,'#2a322e');sDie();kills++;
  streak++;streakT=3;money+=ZT[z.t].m+Math.floor(streak/5);
  if(streak%10===0)toast('¡RACHA x'+streak+'!');
  $('klT').textContent='Abatidos: '+kills;
@@ -653,7 +654,7 @@ function flintCount(){const s=flintSlot();return s?s.n:0}
 function torchGivesLight(){return P&&!P.dead&&!P.dying&&isNight()&&torchLitCount()>0}
 function tryLightTorches(){const t=torchSlot();if(!t)return;let f=flintSlot();while((t.lit||0)<t.n&&f&&f.n>0){t.lit=(t.lit||0)+1;f.n--;if(f.n<=0){hotbar[hotbar.indexOf(f)]=null;f=flintSlot()}renderHotbar();renderAcc()}}
 function maybeStealTorch(){if(godMode||!P||P.dead||P.dying)return;const t=torchSlot();if(!t||!(t.lit>0)||!isNight())return;const p=diff==='FACIL'?0.06:diff==='DIFICIL'?0.22:0.12;if(Math.random()>=p)return;t.lit--;t.n--;if(t.n<=0)hotbar[hotbar.indexOf(t)]=null;deadTorches.push({x:P.x,y:P.y-12,t:0});renderHotbar();renderAcc();toast('¡Te han quitado una antorcha!')}
-function renderAcc(){const bar=$('accBar');if(!bar)return;const n=torchCount();bar.hidden=n<=0;if(n<=0)return;const lit=torchLitCount()>0,giving=torchGivesLight();drawMiniIcon($('accTorchIco'),giving?'torch':'torchOff');$('accTorchT').textContent='x'+n+(lit?(giving?' · ENCENDIDA':' · APAGADA (DÍA)'):' · SIN ENCENDER');bar.classList.toggle('off',!giving)}
+function renderAcc(){const bar=$('accBar');if(!bar)return;const n=torchCount();bar.hidden=n<=0;if(n<=0)return;const lit=torchLitCount()>0,giving=torchGivesLight();drawMiniIcon($('accTorchIco'),giving?'torch':'torchOff');$('accTorchT').textContent='x'+n+(lit?(giving?' · ENCENDIDA':' · APAGADA (DÍA)'):'');bar.classList.toggle('off',!giving)}
 function placeMapPickups(){for(let i=0;i<3;i++){const t=landTiles[(rnd()*landTiles.length)|0];if(t)Pk.push({x:t[0]*T+16,y:t[1]*T+16,kind:'torch'})}for(let i=0;i<5;i++){const t=landTiles[(rnd()*landTiles.length)|0];if(t)Pk.push({x:t[0]*T+16,y:t[1]*T+16,kind:'flint'})}}
 function openWxWheel(){if(!godMode||wxWheelOpen||timePanelOpen)return;if(st!=='play'&&st!=='shop')return;wxWheelFrom=st;st='wxwheel';wxWheelOpen=true;$('wxWheel').hidden=false}
 function closeWxWheel(){if(!wxWheelOpen)return;wxWheelOpen=false;$('wxWheel').hidden=true;st=wxWheelFrom}
@@ -890,9 +891,9 @@ function drawCorpse(sx,sy){const o=CHARS[charIdx];
  R(sx+20,sy-4,2,1,'#111')}
 /* Una extremidad desmembrada (vuela girando y queda en el suelo). */
 function drawLimb(L,cx,cy){const x=L.x-cx,y=L.y-cy;X.save();X.translate(x,y);X.rotate(L.rot);
- if(L.kind==='head'){X.fillStyle=L.skin;X.fillRect(-4,-4,8,8);X.fillStyle='#111';X.fillRect(-2,-1,2,2);X.fillRect(2,-1,2,2)}
- else if(L.kind==='arm'){X.fillStyle=L.col;X.fillRect(-2,-6,5,10);X.fillStyle=L.skin;X.fillRect(-2,4,5,5)}
- else{X.fillStyle=L.col;X.fillRect(-3,-7,6,12);X.fillStyle='#1a1a22';X.fillRect(-3,5,6,3)}
+ if(L.kind==='head'){X.fillStyle=L.skin;X.fillRect(-6,-6,12,12);X.fillStyle='#111';X.fillRect(-3,-1,3,3);X.fillRect(2,-1,3,3)}
+ else if(L.kind==='arm'){X.fillStyle=L.col;X.fillRect(-3,-9,8,14);X.fillStyle=L.skin;X.fillRect(-3,5,8,7)}
+ else{X.fillStyle=L.col;X.fillRect(-4,-10,9,17);X.fillStyle='#1a1a22';X.fillRect(-4,7,9,4)}
  X.restore()}
 function runner(e,sx,sy){const lo=Math.round(Math.sin(e.ph*2.4)*3),d=e.dir,hit=e.f>0,ln=d===1?2:d===3?-2:0,sk='#c9b79a';
  R(sx-6,sy-2,12,3,'rgba(0,0,0,.35)');
