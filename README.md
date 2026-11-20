@@ -12,7 +12,7 @@ Al arrancar sale el menú inicial: elige uno de los 5 personajes y pulsa JUGAR. 
 
 - **WASD / Flechas** — Moverse
 - **Ratón** — Apuntar
-- **Clic izquierdo** — Disparar / Puñetazo
+- **Clic izquierdo (en el terreno)** — Disparar / Puñetazo
 - **R** — Recargar
 - **1–6** — Cambiar de ranura (barra rápida)
 - **Rueda del ratón** — Cambiar de arma (llega hasta el puño)
@@ -37,7 +37,7 @@ Para reasignar una tecla: en CONTROLES, haz clic en la tecla (parpadea) y pulsa 
 - Oleadas de zombis cada vez más numerosas y rápidas.
 - Dinero por cada zombi eliminado (más difícil = más dinero) y bonus por limpiar la oleada.
 - Tienda entre oleadas: 4 armas (pistola, escopeta, subfusil, rifle), munición, botiquines, armadura y mejoras de armas (daño, cargador, recarga).
-- Barra rápida de 6 ranuras: puño, pistola y lo que compres. Clic para usar, arrastrar para mover, los botiquines iguales se agrupan.
+- Barra rápida de 6 ranuras: puño, pistola y lo que compres. Clic para seleccionar el arma o usar un objeto (nunca dispara), arrastrar para mover, los botiquines iguales se agrupan.
 - Zombis: normal, corredor, hinchado, tanque, escupidor y jefe cada 5 oleadas.
 - Barriles explosivos, cajas de madera y de metal rompibles (a puños o a balas), objetos que caen al morir.
 - Récords guardados en el navegador (mejor oleada, más abatidos, más dinero).
@@ -52,6 +52,7 @@ Para reasignar una tecla: en CONTROLES, haz clic en la tecla (parpadea) y pulsa 
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| v2026-11-20f | 2026-11-20 | Pantalla de muerte dice "HAS MUERTO" (antes "HAS CAÍDO"). Clic en una ranura solo selecciona el arma, nunca dispara (antes hbUse() disparaba y con el puño daba el puñetazo); solo dispara el clic en el terreno. Texto de controles actualizado. 325 pruebas. |
 | v2026-11-20e | 2026-11-20 | Lluvia continua (sin tandas): cada gota tiene su propia velocidad (420-620 px/s) y nace en una altura al azar de toda la pantalla; al cambiar el clima se siembra la pantalla entera (180 gotas / 150 copos). Spawn por acumulador (480 gotas/s) para que la densidad no dependa de los FPS. La nieve tenía el mismo problema y se corrigió igual. 322 pruebas. |
 | v2026-11-20d | 2026-11-20 | Sin el texto del menú ("Oleadas, dinero y tienda"). Reloj lento: cada día empieza a las 7:00, 1 min de juego = 5 s reales; opción de mostrar/ocultar el reloj en OPCIONES (además de TAB). Modo DIOS: F12 abre la rueda de clima (sol/lluvia/nieve, pausa el juego) y F11 el panel para cambiar la hora y minutos (flechas + botones rápidos, ESC cancela). Truenos y rayos aleatorios con lluvia (resplandor blanco + rayo dibujado + retumbo) y sonido de lluvia de fondo bajito. 316 pruebas. |
 | v2026-11-20c | 2026-11-20 | Renombrado a THE LAST WAVE. Sonidos reales de puño (punch1/punch2 de Stiven). Modo DIOS: Re-Pág +$100, Av-Pág -$100, sin estamina. Teclas reasignables (correr=Espacio, dash=Shift por defecto; captura con parpadeo, ESC/ENTER cancelan, F1-F12 prohibidas, intercambio si se repite, guardado). Clima aleatorio (sol/lluvia/nieve, nieve escasa). Ciclo día/noche (1 s = 10 min). Reloj con TAB debajo de los zombis que quedan. HUD del arma sin fondo negro ni "RESERVA" (solo icono de bala, más grande). Sin textos de controles in-game. Menú inicial con JUGAR/CONTROLES/OPCIONES/SALIR + selector de 5 personajes. Icono del puño rehecho. 285 pruebas. |
