@@ -958,41 +958,51 @@ const _matCache3d={};
 function mat3d(hex){if(!_matCache3d[hex])_matCache3d[hex]=new THREE.MeshLambertMaterial({color:hex});return _matCache3d[hex]}
 function hexRgb3d(h){const n=parseInt(h.slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255]}
 function box3d(w,h,d,hex){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat3d(hex));return m}
-/* Árboles y objetos del mapa (formas low-poly simples, mismos colores 2D). */
+/* Árboles y objetos del mapa (formas low-poly simples, mismos colores 2D).
+   ESCALA REALISTA: el jugador mide 28 px de alto (1,8 m) → 1 m ≈ 15,5 px.
+   Árboles 4-6 m (~70 px), autos 4,2 m de largo (~66 px), edificios
+   de varios pisos (~90 px), barril a la cintura (~14 px), caja a la
+   rodilla (~10 px). La colisión sigue por tiles (2D); solo cambia el
+   tamaño VISUAL de los modelos. */
 function tree3d(x,z,s){
  const g=new THREE.Group();
- const tr=new THREE.Mesh(new THREE.CylinderGeometry(3,4,11,6),mat3d('#4b3321'));tr.position.set(0,5,0);g.add(tr);
- const c1=new THREE.Mesh(new THREE.SphereGeometry(12,8,6),mat3d('#1f3520'));c1.position.set(0,16,0);c1.scale.set(1,0.8,1);g.add(c1);
- const c2=new THREE.Mesh(new THREE.SphereGeometry(7,8,6),mat3d('#2c4a28'));c2.position.set(-3,21,0);g.add(c2);
+ const tr=new THREE.Mesh(new THREE.CylinderGeometry(4,6,30,6),mat3d('#4b3321'));tr.position.set(0,15,0);g.add(tr);
+ const c1=new THREE.Mesh(new THREE.SphereGeometry(20,8,6),mat3d('#1f3520'));c1.position.set(0,42,0);c1.scale.set(1,0.8,1);g.add(c1);
+ const c2=new THREE.Mesh(new THREE.SphereGeometry(12,8,6),mat3d('#2c4a28'));c2.position.set(-5,58,0);g.add(c2);
  g.position.set(x,0,z);g.scale.set(s||1,s||1,s||1);return g}
 function palm3d(x,z){
  const g=new THREE.Group();
- const tr=new THREE.Mesh(new THREE.CylinderGeometry(2,3,16,6),mat3d('#6a4a2a'));tr.position.set(0,8,0);g.add(tr);
- for(let i=0;i<4;i++){const lf=new THREE.Mesh(new THREE.ConeGeometry(4,14,4),mat3d(i%2?'#2c5a28':'#3a6a30'));lf.position.set(Math.cos(i*1.57)*7,18,Math.sin(i*1.57)*7);lf.rotation.z=Math.cos(i*1.57)*1.1;lf.rotation.x=-Math.sin(i*1.57)*1.1;g.add(lf)}
+ const tr=new THREE.Mesh(new THREE.CylinderGeometry(3,5,55,6),mat3d('#6a4a2a'));tr.position.set(0,27.5,0);g.add(tr);
+ for(let i=0;i<4;i++){const lf=new THREE.Mesh(new THREE.ConeGeometry(7,22,4),mat3d(i%2?'#2c5a28':'#3a6a30'));lf.position.set(Math.cos(i*1.57)*10,58,Math.sin(i*1.57)*10);lf.rotation.z=Math.cos(i*1.57)*1.1;lf.rotation.x=-Math.sin(i*1.57)*1.1;g.add(lf)}
  g.position.set(x,0,z);return g}
 function leafy3d(x,z){
  const g=new THREE.Group();
- const tr=new THREE.Mesh(new THREE.CylinderGeometry(3,4,14,6),mat3d('#4b3321'));tr.position.set(0,7,0);g.add(tr);
- const c1=new THREE.Mesh(new THREE.SphereGeometry(13,8,6),mat3d('#1f4a20'));c1.position.set(0,20,0);c1.scale.set(1,0.85,1);g.add(c1);
- const c2=new THREE.Mesh(new THREE.SphereGeometry(8,8,6),mat3d('#2c5a28'));c2.position.set(-5,25,0);g.add(c2);
- const c3=new THREE.Mesh(new THREE.SphereGeometry(7,8,6),mat3d('#2c5a28'));c3.position.set(5,25,0);g.add(c3);
+ const tr=new THREE.Mesh(new THREE.CylinderGeometry(4,6,34,6),mat3d('#4b3321'));tr.position.set(0,17,0);g.add(tr);
+ const c1=new THREE.Mesh(new THREE.SphereGeometry(22,8,6),mat3d('#1f4a20'));c1.position.set(0,48,0);c1.scale.set(1,0.85,1);g.add(c1);
+ const c2=new THREE.Mesh(new THREE.SphereGeometry(13,8,6),mat3d('#2c5a28'));c2.position.set(-8,62,0);g.add(c2);
+ const c3=new THREE.Mesh(new THREE.SphereGeometry(12,8,6),mat3d('#2c5a28'));c3.position.set(8,62,0);g.add(c3);
  g.position.set(x,0,z);return g}
 function pine3d(x,z){
  const g=new THREE.Group();
- const tr=new THREE.Mesh(new THREE.CylinderGeometry(2,3,10,6),mat3d('#4b3321'));tr.position.set(0,5,0);g.add(tr);
- for(let i=0;i<3;i++){const cn=new THREE.Mesh(new THREE.ConeGeometry(8-i*2,9,6),mat3d(i%2?'#245426':'#1f4a20'));cn.position.set(0,12+i*6,0);g.add(cn)}
+ const tr=new THREE.Mesh(new THREE.CylinderGeometry(3,5,22,6),mat3d('#4b3321'));tr.position.set(0,11,0);g.add(tr);
+ for(let i=0;i<3;i++){const cn=new THREE.Mesh(new THREE.ConeGeometry(16-i*3,20,6),mat3d(i%2?'#245426':'#1f4a20'));cn.position.set(0,30+i*14,0);g.add(cn)}
  g.position.set(x,0,z);return g}
 function bush3d(x,z){
  const g=new THREE.Group();
- for(let i=0;i<3;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(6,7,5),mat3d(i%2?'#2c4a28':'#3a5a30'));b.position.set((i-1)*6,4,(i%2?2:-2));b.scale.set(1,0.7,1);g.add(b)}
+ for(let i=0;i<3;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(7,7,5),mat3d(i%2?'#2c4a28':'#3a5a30'));b.position.set((i-1)*7,5,(i%2?2:-2));b.scale.set(1,0.7,1);g.add(b)}
  g.position.set(x,0,z);return g}
 function car3d(x,z,van){
  const g=new THREE.Group();
  const cols=van?['#5a6a7a','#8a5a2e','#4a7a4a','#a02828']:['#a02828','#2a5a9a','#d9b13b','#c8c8c8','#2a7a4a','#7a3a9a'];
  const col=cols[(Math.abs(x*7+z*13)%cols.length)];
- const body=box3d(van?26:24,van?10:8,20,col);body.position.set(0,van?7:5,0);g.add(body);
- const cab=box3d(14,6,16,'#1a2a3a');cab.position.set(van?-2:-2,van?14:11,0);g.add(cab);
- for(const sx of [-8,8])for(const sz of [-10,10]){const w=box3d(4,4,2,'#111111');w.position.set(sx,2,sz);g.add(w)}
+ /* Auto real: 66 de largo x 26 de alto x 28 de ancho (~4,2 m x 1,7 m x
+    1,8 m); furgoneta: 80 x 38 x 30 (~5,2 m x 2,4 m x 2 m). El auto
+    ocupa ~2 tiles de largo visualmente; su colisión sigue siendo la
+    de su tile. */
+ const body=box3d(van?80:66,van?22:14,van?30:28,col);body.position.set(0,van?13:9,0);g.add(body);
+ const cab=box3d(30,van?16:10,van?26:24,'#1a2a3a');cab.position.set(van?-4:-2,van?30:21,0);g.add(cab);
+ const wx=van?26:20;
+ for(const sx of [-wx,wx])for(const sz of [-12,12]){const w=box3d(7,7,3,'#111111');w.position.set(sx,3.5,sz);g.add(w)}
  g.position.set(x,0,z);return g}
 /* Figurita low-poly: piernas, torso, cabeza, brazos y arma opcional.
    Se construye mirando hacia +z; la rotación Y la orienta. */
@@ -1071,17 +1081,17 @@ function rebuildMapObjects3d(){
  for(let ty=0;ty<MH;ty++)for(let tx=0;tx<MW;tx++){
   const t=M[ty][tx];if(!t)continue;
   const x=tx*T+16,z=ty*T+16;let m=null;
-  if(t===2){m=box3d(30,18,30,'#4a3d3b');m.position.set(x,9,z)}
+  if(t===2){m=box3d(30,90,30,'#4a3d3b');m.position.set(x,45,z)}
   else if(t===3)m=tree3d(x,z,1);
   else if(t===21)m=palm3d(x,z);
   else if(t===22)m=leafy3d(x,z);
   else if(t===23)m=pine3d(x,z);
-  else if(t===4){m=box3d(28,20,28,'#7a2b2b');m.position.set(x,10,z)}
-  else if(t===10){m=box3d(28,20,28,'#5a6a7a');m.position.set(x,10,z)}
-  else if(t===17){m=box3d(24,16,24,'#a8804a');m.position.set(x,8,z)}
-  else if(t===18){m=box3d(28,20,28,'#3a4a2a');m.position.set(x,10,z)}
-  else if(t===9){m=new THREE.Mesh(new THREE.CylinderGeometry(8,8,20,10),mat3d('#a02020'));m.position.set(x,10,z)}
-  else if(t===5){m=new THREE.Mesh(new THREE.SphereGeometry(10,8,6),mat3d('#5a5a5a'));m.scale.set(1,0.7,1);m.position.set(x,5,z)}
+  else if(t===4){m=box3d(18,10,18,'#7a2b2b');m.position.set(x,5,z)}
+  else if(t===10){m=box3d(18,10,18,'#5a6a7a');m.position.set(x,5,z)}
+  else if(t===17){m=box3d(16,8,16,'#a8804a');m.position.set(x,4,z)}
+  else if(t===18){m=box3d(18,10,18,'#3a4a2a');m.position.set(x,5,z)}
+  else if(t===9){m=new THREE.Mesh(new THREE.CylinderGeometry(6,6,14,10),mat3d('#a02020'));m.position.set(x,7,z)}
+  else if(t===5){m=new THREE.Mesh(new THREE.SphereGeometry(11,8,6),mat3d('#5a5a5a'));m.scale.set(1,0.8,1);m.position.set(x,6,z)}
   else if(t===14)m=car3d(x,z,false);
   else if(t===15)m=car3d(x,z,true);
   else if(t===6)m=bush3d(x,z);
@@ -1156,13 +1166,14 @@ function syncParticles3d(){
  wxPts3d.geometry.attributes.color.needsUpdate=true;
  wxPts3d.geometry.setDrawRange(0,m)}
 /* Altura (techo) de un tile sólido, para que la cámara no atraviese
-   edificios ni objetos al colocarse detrás del jugador. */
+   edificios ni objetos al colocarse detrás del jugador. Debe coincidir
+   con la altura VISUAL de cada modelo (escala realista). */
 function tileTop3d(tx,ty){
  if(tx<0||ty<0||tx>=MW||ty>=MH)return 18;
  const t=M[ty][tx];
- if(t===2)return 18;if(t===4||t===10||t===18||t===9)return 20;if(t===17)return 16;
- if(t===3||t===22||t===23)return 26;if(t===21)return 18;
- if(t===14)return 12;if(t===15)return 15;if(t===5)return 10;if(t===6)return 8;
+ if(t===2)return 90;if(t===4||t===10||t===18)return 11;if(t===9)return 14;if(t===17)return 9;
+ if(t===3)return 70;if(t===22)return 76;if(t===23)return 70;if(t===21)return 70;
+ if(t===14)return 26;if(t===15)return 38;if(t===5)return 15;if(t===6)return 10;
  return 18}
 /* Fracción (0..1) del desplazamiento de cámara que queda libre: recorre
    la línea de visión (cámara→punto de mira) y, si un tile sólido la
@@ -1245,7 +1256,10 @@ function render(){
      Si un objeto sólido cruza la línea de visión, la cámara se acerca
      al jugador (camViewFrac3d) en vez de atravesarlo. */
   const fx=Math.cos(aim),fz=Math.sin(aim),rx=-Math.sin(aim),rz=Math.cos(aim);
-  const camDist=100,camH=24+camDist*Math.sin(viewPitch);
+  /* Cámara algo más lejos (110 en vez de 100): el mundo es más grande
+     y así el jugador no tapa la pantalla ni los objetos grandes se
+     ven recortados. */
+  const camDist=110,camH=24+camDist*Math.sin(viewPitch);
   let cdx=px-fx*camDist*Math.cos(viewPitch)+rx*10,cdz=pz-fz*camDist*Math.cos(viewPitch)+rz*10,ch=camH;
   const cfr=camViewFrac3d(px,pz,cdx,cdz,ch);
   if(cfr<1){cdx=px+(cdx-px)*cfr;cdz=pz+(cdz-pz)*cfr;ch=16+(ch-16)*cfr}
