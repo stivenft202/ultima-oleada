@@ -453,7 +453,7 @@ function bossVolley(z){const n=3+(Math.random()<.5?1:0),radial=Math.random()<.5;
  else{const a0=Math.atan2((P.y-12)-z.y,P.x-z.x);for(let i=0;i<n;i++){const a=a0+(i-(n-1)/2)*.18;Bo.push({x:z.x,y:z.y-20,vx:Math.cos(a)*240,vy:Math.sin(a)*240,l:3})}}}
 function burstOrange(o){for(let i=0;i<8;i++){const a=rr(0,6.28),s=rr(20,90);Pa.push({x:o.x,y:o.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,l:rr(.2,.45),c:['#ffd166','#e8742c','#ff9a3a'][i%3],s:rr(2,4),k:'f'})}}
 function reap(){let again=1;while(again){again=0;for(let i=Z.length-1;i>=0;i--){const z=Z[i];if(z.dead&&!z.done){z.done=1;kill(z,z.kb||{vx:0,vy:0});if(z.t===2){boom(z);again=1}}}Z=Z.filter(z=>!z.done)}}
-let st='menu',dev='kb',gore=true,P,Z,Bu,Pa,kills=0,spawnT=0,shake=0,camX=0,camY=0,aim=0,mx=VW/2,my=VH/2,md=0,tt,wave=0,waveTotal=0,waveSpawned=0,money=0;
+let st='menu',dev='kb',gore=true,P,Z,Bu,Pa,kills=0,spawnT=0,shake=0,camX=0,camY=0,aim=0,mx=VW/2,my=VH/2,md=0,tt,wave=0,waveTotal=0,waveSpawned=0,money=0,viewYaw=0,viewPitch=0.38,lookDelta=false,ptrLocked=false;
 let godMode=false;
 /* Secuencia de muerte: deathT tiempo desde la muerte, deathDelay 3 s
    (desmembramiento) o 5 s (otras causas) hasta que sale el aviso. */
@@ -463,7 +463,7 @@ function finishWave(){waveSpawned=waveTotal;for(const z of Z){if(!z.dead){z.hp=0
 let Pk=[],Sp=[],Bo=[],streak=0,streakT=0,rec={bestWave:0,bestKills:0,bestMoney:0},tileHp={};
 const K={l:0,r:0,u:0,d:0,sh:0},PD={x:0,y:0,rx:0,ry:0,fire:0,run:0,rl:0,start:0};
 const toast=t=>{$('toast').textContent=t;clearTimeout(tt);tt=setTimeout(()=>$('toast').textContent='',1800)};
-function newGame(seed){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;P={x:spawnTX*T+16,y:spawnTY*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();sc.clearRect(0,0,MW*T,MH*T);stainDirty3d=true;$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=true;startWave(1);$('wrap').focus()}
+function newGame(seed){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;P={x:spawnTX*T+16,y:spawnTY*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();sc.clearRect(0,0,MW*T,MH*T);stainDirty3d=true;$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=true;viewYaw=aim;startWave(1);$('wrap').focus()}
 /* ---------- OLEADAS (dificultad Normal: crece de forma constante) ---------- */
 /* Oleada n trae 6+n*4 zombis (10, 14, 18...), aparecen más rápido y más
    juntos cuanto más alta es la oleada; los corredores e hinchados son
@@ -834,11 +834,16 @@ addEventListener('keydown',e=>{if(capturing){handleCaptureKey(e);return}dev='kb'
  if(e.code===BIND.clock&&!e.repeat){e.preventDefault();setClockVisible(!clockVisible)}
  if(godMode&&(st==='play'||st==='shop')&&!e.repeat){if(e.code===BIND.moneyUp){e.preventDefault();money+=100;toast('+$100')}else if(e.code===BIND.moneyDown){e.preventDefault();money=Math.max(0,money-100);toast('-$100')}}
  if(st==='play'){if(e.code===BIND.slot0)hbUse(0);if(e.code===BIND.slot1)hbUse(1);if(e.code===BIND.slot2)hbUse(2);if(e.code===BIND.slot3)hbUse(3);if(e.code===BIND.slot4)hbUse(4);if(e.code===BIND.slot5)hbUse(5);
-  if(e.code===BIND.dash){e.preventDefault();if(!e.repeat&&P.dashCd<=0){let dx=(K.r-K.l)+PD.x,dy=(K.d-K.u)+PD.y;const m=Math.hypot(dx,dy);if(m>.1){dx/=m;dy/=m}else{dx=Math.cos(aim);dy=Math.sin(aim)}P.dashX=dx;P.dashY=dy;P.dashT=.18;P.dashCd=1.2}}}
+  if(e.code===BIND.dash){e.preventDefault();if(!e.repeat&&P.dashCd<=0){const _fw=(K.u?1:0)-(K.d?1:0)-PD.y,_st=(K.r?1:0)-(K.l?1:0)+PD.x;let dx=Math.cos(aim)*_fw-Math.sin(aim)*_st,dy=Math.sin(aim)*_fw+Math.cos(aim)*_st;const m=Math.hypot(dx,dy);if(m>.1){dx/=m;dy/=m}else{dx=Math.cos(aim);dy=Math.sin(aim)}P.dashX=dx;P.dashY=dy;P.dashT=.18;P.dashCd=1.2}}}
  if(e.code===BIND.pause||e.code==='Escape')pause();if(e.code===BIND.mute){mute=!mute;if(out)out.gain.value=mute?0:vol}if(e.code===BIND.gore){gore=!gore;toast('Gore '+(gore?'intenso':'reducido'))}});
 addEventListener('keyup',e=>{if(km[e.code])K[km[e.code]]=0});
-cv.addEventListener('mousemove',e=>{dev='kb';const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width,sy=(e.clientY-r.top)/r.height;const cr=$('cross3d');if(cr){cr.style.left=(sx*100)+'%';cr.style.top=(sy*100)+'%'}const wpt=aimWorld3d(sx,sy);if(wpt){mx=wpt.x-camX;my=wpt.z-camY}else{mx=sx*VW;my=sy*VH}});
-cv.addEventListener('mousedown',e=>{dev='kb';if(e.button===0)md=1});addEventListener('mouseup',()=>md=0);cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('mousemove',e=>{dev='kb';if(typeof e.movementX==='number'){viewYaw+=e.movementX*.0035;viewPitch=Math.max(.12,Math.min(.85,viewPitch+e.movementY*.0022));lookDelta=true;aim=viewYaw;return}const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width,sy=(e.clientY-r.top)/r.height;const cr=$('cross3d');if(cr){cr.style.left=(sx*100)+'%';cr.style.top=(sy*100)+'%'}const wpt=aimWorld3d(sx,sy);if(wpt){mx=wpt.x-camX;my=wpt.z-camY}else{mx=sx*VW;my=sy*VH}});
+cv.addEventListener('mousedown',e=>{dev='kb';if(e.button===0){md=1;if(st==='play'&&!ptrLocked&&cv.requestPointerLock){try{const r=cv.requestPointerLock();if(r&&r.catch)r.catch(function(){})}catch(_){}}}});addEventListener('mouseup',()=>md=0);cv.addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('pointerlockchange',()=>{ptrLocked=document.pointerLockElement===cv});
+let _tx=null,_ty=null;
+cv.addEventListener('touchstart',e=>{dev='kb';const t=e.touches[0];_tx=t.clientX;_ty=t.clientY;md=1;e.preventDefault()},{passive:false});
+cv.addEventListener('touchmove',e=>{const t=e.touches[0];viewYaw+=(t.clientX-_tx)*.006;viewPitch=Math.max(.12,Math.min(.85,viewPitch+(t.clientY-_ty)*.004));lookDelta=true;aim=viewYaw;_tx=t.clientX;_ty=t.clientY;e.preventDefault()},{passive:false});
+cv.addEventListener('touchend',()=>{md=0;_tx=null;_ty=null});
 cv.addEventListener('wheel',e=>{if(st!=='play')return;e.preventDefault();const d=e.deltaY>0?1:-1;hbSelect((sel+d+HB_N)%HB_N)},{passive:false});
 function pad(){let g;try{g=[...(navigator.getGamepads?navigator.getGamepads():[])].find(p=>p)}catch(e){return}if(!g)return;const dz=v=>Math.abs(v)<.22?0:v,b=i=>g.buttons[i]&&g.buttons[i].pressed;
  PD.x=dz(g.axes[0]);PD.y=dz(g.axes[1]);PD.rx=dz(g.axes[2]);PD.ry=dz(g.axes[3]);PD.fire=(g.buttons[7]&&g.buttons[7].value>.4)||b(5)?1:0;PD.run=b(1)||b(10)?1:0;
@@ -868,7 +873,7 @@ function shoot(){if(P.wi===4){punch();return}
  Pa.push({x:P.x,y:P.y-12,vx:-Math.sin(aim)*50+rr(-20,20),vy:Math.cos(aim)*50,l:.4,c:'#d9b13b',s:2});if(!P.ammo&&!godMode)reload()}
 function upd(dt){pad();
  const ox=P.x,oy=P.y;
- let ix=(K.r-K.l)+PD.x,iy=(K.d-K.u)+PD.y;const m=Math.hypot(ix,iy);if(m>1){ix/=m;iy/=m}
+ const _fw=(K.u?1:0)-(K.d?1:0)-PD.y,_st=(K.r?1:0)-(K.l?1:0)+PD.x;let ix=Math.cos(aim)*_fw-Math.sin(aim)*_st,iy=Math.sin(aim)*_fw+Math.cos(aim)*_st;const m=Math.hypot(ix,iy);if(m>1){ix/=m;iy/=m}
  const moving=m>.1,run=(K.sh||PD.run)&&moving&&(godMode||P.st>0);P.sd-=dt;if(run){if(!godMode)P.st=Math.max(0,P.st-28*dt);P.sd=.6}else if(P.sd<=0)P.st=Math.min(100,P.st+22*dt);
  gameMin=(gameMin+dt/5)%1440;wxT-=dt;if(wxT<=0){pickWeather();wxT=rr(20,50)}
  if(weather==='rain'){wxAcc+=dt*480;while(wxAcc>=1&&Wx.length<300){wxAcc--;Wx.push({x:camX+rr(0,VW),y:camY+rr(-10,VH+10),vx:-30,vy:rr(420,620),k:'r'})}thunderT-=dt;if(thunderT<=0){thunderT=rr(6,20);flash=.9;bolt=makeBolt();sThunder()}}
@@ -881,8 +886,9 @@ function upd(dt){pad();
  let pvx=0,pvy=0;if(dt>0){pvx=(P.x-ox)/dt;pvy=(P.y-oy)/dt;const ps=Math.hypot(pvx,pvy);if(ps>165){pvx=pvx/ps*165;pvy=pvy/ps*165}}
  if(moving||dashing){P.ph+=dt*(run?14:9);const sn=Math.floor(P.ph/Math.PI);if(sn!==P.ls){P.ls=sn;nz(.04,.07,run?1200:700)}}
  if(streakT>0){streakT-=dt;if(streakT<=0)streak=0}
+ camX=Math.max(0,Math.min(MW*T-VW,P.x-VW/2));camY=Math.max(0,Math.min(MH*T-VH,P.y-12-VH/2));
  const px=P.x-camX,py=P.y-12-camY;
- if(dev==='kb')aim=Math.atan2(my-py,mx-px);else if(Math.hypot(PD.rx,PD.ry)>.3)aim=Math.atan2(PD.ry,PD.rx);else if(moving&&!PD.rx&&!PD.ry&&dev==='pad')aim=Math.atan2(iy,ix);
+ if(dev==='kb'){if(lookDelta)aim=viewYaw;else aim=Math.atan2(my-py,mx-px)}else if(Math.hypot(PD.rx,PD.ry)>.3){aim=Math.atan2(PD.ry,PD.rx);viewYaw=aim}else if(moving&&!PD.rx&&!PD.ry&&dev==='pad'){aim=Math.atan2(iy,ix);viewYaw=aim}
  P.dir=d4(Math.cos(aim),Math.sin(aim));P.cd-=dt;P.fl-=dt;P.hu-=dt;if(P.rl>0){P.rl-=dt;if(P.rl<=0){P.rl=0;const w=WP[P.wi];if(godMode)P.ammo=effMag(P.wi);else{const take=Math.min(effMag(P.wi)-P.ammo,P.res[P.wi]);P.ammo+=take;P.res[P.wi]-=take}}}
  if((md&&dev==='kb')||PD.fire)shoot();
  spawnT-=dt;const maxA=Math.min(6+wave,14),iv=Math.max(1.2,2.6-wave*.15);
@@ -930,7 +936,11 @@ function upd(dt){pad();
    textura del suelo; la sangre se sigue pintando en stC y se usa como
    textura transparente encima del suelo. Los objetos del mapa,
    personajes, partículas y proyectiles son mallas 3D low-poly con los
-   MISMOS colores del 2D. El HUD (DOM) no se toca. */
+   MISMOS colores del 2D. El HUD (DOM) no se toca.
+   VISTA EN TERCERA PERSONA: la cámara va detrás del jugador, por
+   encima del hombro, mirando hacia donde apunta (aim). El ratón gira
+   la vista (viewYaw/viewPitch, con pointer lock en escritorio o
+   arrastre en táctil); WASD se mueve respecto a la cámara. */
 /* drawHair se conserva en 2D: la usa drawCharPreview (vista previa
    del personaje en el menú), que dibuja en un canvas pequeño. */
 function drawHair(c,cx,gy,s,o,d){const R2=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(cx+x*s),Math.round(gy+y*s),Math.max(1,Math.round(w*s)),Math.max(1,Math.round(h*s)))};const hs=o.hairStyle||0,hair=o.hair;
@@ -1145,6 +1155,30 @@ function syncParticles3d(){
  wxPts3d.geometry.attributes.position.needsUpdate=true;
  wxPts3d.geometry.attributes.color.needsUpdate=true;
  wxPts3d.geometry.setDrawRange(0,m)}
+/* Altura (techo) de un tile sólido, para que la cámara no atraviese
+   edificios ni objetos al colocarse detrás del jugador. */
+function tileTop3d(tx,ty){
+ if(tx<0||ty<0||tx>=MW||ty>=MH)return 18;
+ const t=M[ty][tx];
+ if(t===2)return 18;if(t===4||t===10||t===18||t===9)return 20;if(t===17)return 16;
+ if(t===3||t===22||t===23)return 26;if(t===21)return 18;
+ if(t===14)return 12;if(t===15)return 15;if(t===5)return 10;if(t===6)return 8;
+ return 18}
+/* Fracción (0..1) del desplazamiento de cámara que queda libre: recorre
+   la línea de visión (cámara→punto de mira) y, si un tile sólido la
+   cruza, acerca la cámara hasta justo antes del obstáculo para que no
+   atraviese paredes ni se meta dentro de los edificios. */
+function camViewFrac3d(px,pz,cx,cz,ch){
+ const dx=cx-px,dz=cz-pz,D=Math.hypot(dx,dz);
+ if(D<1)return 1;
+ const N=12;
+ for(let i=1;i<=N;i++){
+  const f=i/N,x=px+dx*f,z=pz+dz*f;
+  const h=14+(ch-14)*(f*D+45)/(D+45);
+  const tx=Math.floor(x/T),ty=Math.floor(z/T);
+  if(tx<0||ty<0||tx>=MW||ty>=MH)continue;
+  if(sol(x,z)&&tileTop3d(tx,ty)>h)return Math.max(0.12,(i-1)/N)}
+ return 1}
 /* Inicializa la escena 3D (una sola vez, perezosa: al primer render). */
 function init3D(){
  if(threeTried)return;threeTried=true;
@@ -1195,7 +1229,7 @@ function aimWorld3d(sx,sy){
  const hit=raycaster3d.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),pt);
  return hit?pt:null}
 /* Render 3D: mismo nombre y misma firma que el render 2D (loop() lo llama).
-   La cámara sigue al jugador desde arriba con ángulo; el HUD se actualiza
+   Cámara en tercera persona detrás del jugador; el HUD se actualiza
    igual que en el 2D (líneas copiadas tal cual). */
 function render(){
  shake*=.85;const ox=(Math.random()-.5)*shake,oy=(Math.random()-.5)*shake;
@@ -1206,8 +1240,18 @@ function render(){
   if(mapDirty3d){groundTex3d.needsUpdate=true;rebuildMapObjects3d();mapDirty3d=false}
   if(stainDirty3d){stainTex3d.needsUpdate=true;stainDirty3d=false}
   const px=P.x,pz=P.y-12;
-  camera3d.position.set(px+ox,320,pz+200+oy);
-  camera3d.lookAt(px+ox,0,pz-40+oy);
+  /* Cámara en tercera persona: detrás del jugador, por encima del
+     hombro (10 px a la derecha), mirando hacia donde apunta (aim).
+     Si un objeto sólido cruza la línea de visión, la cámara se acerca
+     al jugador (camViewFrac3d) en vez de atravesarlo. */
+  const fx=Math.cos(aim),fz=Math.sin(aim),rx=-Math.sin(aim),rz=Math.cos(aim);
+  const camDist=100,camH=24+camDist*Math.sin(viewPitch);
+  let cdx=px-fx*camDist*Math.cos(viewPitch)+rx*10,cdz=pz-fz*camDist*Math.cos(viewPitch)+rz*10,ch=camH;
+  const cfr=camViewFrac3d(px,pz,cdx,cdz,ch);
+  if(cfr<1){cdx=px+(cdx-px)*cfr;cdz=pz+(cdz-pz)*cfr;ch=16+(ch-16)*cfr}
+  cdx=Math.max(8,Math.min(MW*T-8,cdx));cdz=Math.max(8,Math.min(MH*T-8,cdz));ch=Math.max(12,ch);
+  camera3d.position.set(cdx+ox,ch,cdz+oy);
+  camera3d.lookAt(px+fx*45,14,pz+fz*45);
   syncEntities3d();syncPickups3d();syncAcid3d();syncOrange3d();syncBullets3d();syncLimbs3d();syncParticles3d();
   /* Luces de día/noche (mismo dayLight() del 2D). */
   const dl=dayLight();
@@ -1229,7 +1273,8 @@ function render(){
    boltLine3d.geometry.setDrawRange(0,bolt.length);
    boltLine3d.visible=true}
   else boltLine3d.visible=false;
-  /* Flecha al zombi más cercano fuera de pantalla (solo si quedan ≤3). */
+  /* Flecha al zombi más cercano fuera de pantalla (solo si quedan ≤3):
+     se proyecta su posición con la cámara 3D (tercera persona). */
   const rem=(waveTotal-waveSpawned)+Z.length;
   const za=$('zArrow3d');
   if(za){
@@ -1238,8 +1283,11 @@ function render(){
     let nz=null,nd=1e9;
     for(const z of Z){if(z.dead)continue;const d=Math.hypot(z.x-P.x,z.y-P.y);if(d<nd){nd=d;nz=z}}
     if(nz){
-     const sx=nz.x-cx,sy=nz.y-12-cy;
-     if(sx<0||sx>VW||sy<0||sy>VH){
+     const v=new THREE.Vector3(nz.x,12,nz.y-12);
+     if(v.project)v.project(camera3d);
+     let sx=(v.x+1)/2*VW,sy=(1-v.y)/2*VH;
+     if(v.z>1){sx=VW-sx;sy=VH-sy}
+     if(sx<0||sx>VW||sy<0||sy>VH||v.z>1){
       const ax=Math.max(24,Math.min(VW-24,sx)),ay=Math.max(24,Math.min(VH-24,sy)),a=Math.atan2(sy-ay,sx-ax);
       za.style.display='block';za.style.left=(ax/VW*100)+'%';za.style.top=(ay/VH*100)+'%';
       za.style.transform='translate(-50%,-50%) rotate('+(a+Math.PI/2)+'rad)';show=true}}}
@@ -1252,7 +1300,7 @@ function render(){
   $('hpb').style.width=P.hp+'%';$('stb').style.width=P.st+'%';drawShopIcon($('wicon'),WICON[P.wi]);$('wname').textContent=WP[P.wi].n;if(P.wi===4){$('wammoMag').textContent='CUERPO A CUERPO';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else if(P.rl>0){$('wammoMag').textContent='RECARGANDO…';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else{$('wammoMag').textContent=P.ammo+'/'+effMag(P.wi);$('wammoRes').textContent=''+P.res[P.wi];$('wammoIco').style.display=''}const dc=$('dashCd');dc.textContent=P.dashCd<=0?'DASH LISTO':'DASH '+Math.ceil(P.dashCd*10)/10+'s';dc.style.color=P.dashCd<=0?'#7ab83a':'#8a8a8a';const sk=$('streak');sk.hidden=streak<3;sk.textContent='RACHA x'+streak;$('wv').textContent='Oleada: '+wave;$('mnT').textContent='$ '+money;$('zcT').textContent='Zombis: '+((waveTotal-waveSpawned)+Z.length);$('hotbar').hidden=st!=='play';if(st!=='play')$('hbTip').hidden=true;
   $('clock').hidden=!clockVisible;$('clockT').textContent=fmtTime();drawMiniIcon($('clockIco'),(gameMin>=360&&gameMin<1080)?'sun':'moon');drawMiniIcon($('wxIco'),weather==='rain'?'rain':weather==='snow'?'snow':'sun')}
 
-let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();if(P)render();requestAnimationFrame(loop)}
+let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st!=='play'&&ptrLocked&&document.exitPointerLock)document.exitPointerLock();if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();if(P)render();requestAnimationFrame(loop)}
 $('play').onclick=()=>{ac();newGame()};$('again').onclick=newGame;
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
 $('clockBtn').onclick=()=>setClockVisible(!clockVisible);
