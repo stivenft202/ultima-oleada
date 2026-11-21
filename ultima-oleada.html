@@ -1207,6 +1207,12 @@ function boss(e,sx,sy){const hit=e.f>0;
  R(sx-9,sy-28,18,3,'#2a0a0a');R(sx-9,sy-20,18,2,'#2a0a0a');R(sx-2,sy-26,4,5,'#ffd166');
  if(!e.dm||!e.dm.head){R(sx-8,sy-46,16,12,'#8fa87a');R(sx-8,sy-46,3,12,shade('#8fa87a',.25));R(sx-10,sy-48,4,6,'#ffd166');R(sx+6,sy-48,4,6,'#ffd166');R(sx-10,sy-48,4,2,'#fff3b0');R(sx+6,sy-48,4,2,'#fff3b0');R(sx-5,sy-42,3,3,'#ff2a2a');R(sx+2,sy-42,3,3,'#ff2a2a');R(sx-5,sy-37,10,2,'#3a0a0a')}
  R(sx-18,sy-30,5,12,'#8fa87a');R(sx-18,sy-30,1,12,shade('#8fa87a',.25));if(!e.dm||!e.dm.arm){R(sx+13,sy-30,5,12,'#8fa87a');R(sx+13,sy-30,1,12,shade('#8fa87a',.25))}}
+/* Fase F: caché del HUD — escribir en el DOM solo cuando el valor cambia
+   (medido: antes eran ~12 mutaciones por frame, ~720/s, aunque nada hubiera
+   cambiado). Los iconos de canvas se redibujan solo cuando cambia el arma o el tipo. */
+let _hudWicon=-1,_hudClock='',_hudWx='';
+function _hudT(id,v){const e=$(id);if(e.textContent!==v)e.textContent=v}
+function _hudH(id,v){const e=$(id);if(e.hidden!==v)e.hidden=v}
 function render(){
  shake*=.85;const ox=(Math.random()-.5)*shake,oy=(Math.random()-.5)*shake;
  camX=Math.max(0,Math.min(MW*T-VW,P.x-VW/2));camY=Math.max(0,Math.min(MH*T-VH,P.y-12-VH/2));
@@ -1251,10 +1257,23 @@ function render(){
  const g=X.createRadialGradient(lx,ly,70,lx,ly,330);g.addColorStop(0,'rgba(10,5,14,0)');g.addColorStop(1,'rgba(10,5,14,.65)');X.fillStyle=g;X.fillRect(0,0,VW,VH);
  if(dev==='kb'){R(mx-5,my,4,1,'#fff');R(mx+2,my,4,1,'#fff');R(mx,my-5,1,4,'#fff');R(mx,my+2,1,4,'#fff')}
  else{const rx=lx+Math.cos(aim)*60,ry=ly+Math.sin(aim)*60;R(rx-3,ry,7,1,'#fff');R(rx,ry-3,1,7,'#fff')}
- $('hpb').style.width=P.hp+'%';$('stb').style.width=P.st+'%';drawShopIcon($('wicon'),WICON[P.wi]);$('wname').textContent=WP[P.wi].n;if(P.wi===4){$('wammoMag').textContent='CUERPO A CUERPO';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else if(P.rl>0){$('wammoMag').textContent='RECARGANDO…';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else{$('wammoMag').textContent=P.ammo+'/'+effMag(P.wi);$('wammoRes').textContent=''+P.res[P.wi];$('wammoIco').style.display=''}const dc=$('dashCd');dc.textContent=P.dashCd<=0?'DASH LISTO':'DASH '+Math.ceil(P.dashCd*10)/10+'s';dc.style.color=P.dashCd<=0?'#7ab83a':'#8a8a8a';const sk=$('streak');sk.hidden=streak<3;sk.textContent='RACHA x'+streak;$('wv').textContent='Oleada: '+wave;$('mnT').textContent='$ '+money;$('zcT').textContent='Zombis: '+((waveTotal-waveSpawned)+Z.length);$('hotbar').hidden=st!=='play';if(st!=='play')$('hbTip').hidden=true;
- $('clock').hidden=!clockVisible;$('clockT').textContent=fmtTime();drawMiniIcon($('clockIco'),(gameMin>=360&&gameMin<1080)?'sun':'moon');drawMiniIcon($('wxIco'),weather==='rain'?'rain':weather==='snow'?'snow':'sun')}
+ /* HUD (Fase F): escribir solo cuando el valor cambia; los iconos de canvas
+    solo se redibujan cuando cambia el arma o el tipo. Mismos valores que antes. */
+ $('hpb').style.width=P.hp+'%';$('stb').style.width=P.st+'%';
+ if(_hudWicon!==P.wi){_hudWicon=P.wi;drawShopIcon($('wicon'),WICON[P.wi])}
+ _hudT('wname',WP[P.wi].n);
+ if(P.wi===4){_hudT('wammoMag','CUERPO A CUERPO');_hudT('wammoRes','');$('wammoIco').style.display='none'}
+ else if(P.rl>0){_hudT('wammoMag','RECARGANDO…');_hudT('wammoRes','');$('wammoIco').style.display='none'}
+ else{_hudT('wammoMag',P.ammo+'/'+effMag(P.wi));_hudT('wammoRes',''+P.res[P.wi]);$('wammoIco').style.display=''}
+ const dc=$('dashCd');_hudT('dashCd',P.dashCd<=0?'DASH LISTO':'DASH '+Math.ceil(P.dashCd*10)/10+'s');dc.style.color=P.dashCd<=0?'#7ab83a':'#8a8a8a';
+ _hudH('streak',streak<3);_hudT('streak','RACHA x'+streak);
+ _hudT('wv','Oleada: '+wave);_hudT('mnT','$ '+money);_hudT('zcT','Zombis: '+((waveTotal-waveSpawned)+Z.length));
+ _hudH('hotbar',st!=='play');if(st!=='play')_hudH('hbTip',true);
+ _hudH('clock',!clockVisible);_hudT('clockT',fmtTime());
+ const _ck=(gameMin>=360&&gameMin<1080)?'sun':'moon';if(_hudClock!==_ck){_hudClock=_ck;drawMiniIcon($('clockIco'),_ck)}
+ const _wx=weather==='rain'?'rain':weather==='snow'?'snow':'sun';if(_hudWx!==_wx){_hudWx=_wx;drawMiniIcon($('wxIco'),_wx)}}
 function dmgNum(x,y,n){if(Dm.length>24)Dm.shift();Dm.push({x:x+rr(-4,4),y:y-6,n:Math.round(n),l:.8})}
-let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();if(P)render();requestAnimationFrame(loop)}
+let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();/* Fase F: render() solo cuando el mundo se ve. En menú, pausa, tienda y salida el overlay es opaco y el canvas queda tapado: dibujarlo cada frame (~3-4 ms) era trabajo perdido. En play, dying, dead, timepanel y wxwheel sí se ve. */if(P&&(st==='play'||st==='dying'||st==='dead'||st==='timepanel'||st==='wxwheel'))render();requestAnimationFrame(loop)}
 $('play').onclick=()=>{ac();newGame()};$('again').onclick=newGame;
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
 $('clockBtn').onclick=()=>setClockVisible(!clockVisible);
