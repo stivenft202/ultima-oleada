@@ -125,6 +125,41 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
 .book-page h3{margin:0 0 .5cqw;font-size:1.15cqw;color:#7a1420}
 .book-page ul{margin:0;padding-left:0;list-style:none}
 .book-page li::before{content:'> ';color:#7a1420}
+
+/* ---------- MENÚ 9 — PERGAMINO CLARO Y CAFÉ · TIENDA 8 — MADERA OSCURA Y DORADO (v2026-11-21c) ---------- */
+/* El fondo de los overlays nunca se queda corto: si el contenido es más alto que la pantalla, se desplaza dentro del overlay y el fondo lo cubre todo. */
+.ov{overflow-y:auto}
+#menu.ov{background:radial-gradient(ellipse at 18% 12%,#00000012 0 7%,transparent 8%),radial-gradient(ellipse at 82% 88%,#8a6a3a26 0 9%,transparent 10%),radial-gradient(ellipse at 65% 45%,#0000000a 0 5%,transparent 6%),repeating-linear-gradient(0deg,#8a6a3a0d 0 .15cqw,transparent .15cqw .7cqw),linear-gradient(180deg,#f7ead0 0%,#efe0bd 45%,#dcc493 100%);color:#3a2a1a;text-shadow:none}
+#menu h1{color:#4a2f14;text-shadow:.15cqw .15cqw 0 #fff8e088,0 .3cqw 0 #8a6a3a55}
+#menu .char-title{color:#5a3a1a}
+#menu small{color:#5a3a1a}
+.menu-layout{display:flex;align-items:center;justify-content:center;gap:3cqw;width:100%;max-width:90cqw}
+.menu-left{display:flex;flex-direction:column;align-items:center;gap:1.2cqw;min-width:0}
+.menu-right{display:flex;flex-direction:column;gap:.9cqw;align-items:stretch;padding-left:3cqw;border-left:.15cqw solid #8a6a3a66}
+#menu .b,#menu .menu-btn{width:30cqw;margin:0;white-space:nowrap;background:linear-gradient(180deg,#fdf6e0 0%,#f2e3c0 45%,#d9c08a 100%);color:#3a2a1a;border:.25cqw solid #8a6a3a;border-radius:1cqw;text-shadow:none;box-shadow:inset 0 .25cqw 0 #ffffff88,inset 0 -.25cqw 0 #8a6a3a55,0 .4cqw #00000055}
+#menu .b:hover,#menu .menu-btn:hover{filter:brightness(1.06)}
+#menu .b:active,#menu .menu-btn:active{filter:brightness(.92)}
+#menu .char-opt{background:linear-gradient(180deg,#fdf6e0,#e8d5a8);border:.2cqw solid #8a6a3a;color:#3a2a1a;text-shadow:none;box-shadow:inset 0 .2cqw 0 #ffffff88,0 .3cqw #00000044}
+#menu .char-opt:hover{border-color:#c89828}
+#menu .char-opt.sel{border-color:#c89828;box-shadow:0 0 0 .2cqw #c89828,0 0 1cqw #c8982888}
+#menu .char-opt span{align-self:stretch;background:#3a2a1a;color:#f2e3c0;text-align:center;padding:.3cqw 0;margin:.2cqw -.6cqw -.6cqw}
+#shop.ov{padding:.8cqw 1.2cqw;background:repeating-linear-gradient(90deg,transparent 0 8cqw,#0000001a 8cqw 8.3cqw),repeating-linear-gradient(0deg,#00000026 0 .2cqw,transparent .2cqw 4cqw),linear-gradient(180deg,#3a2412 0%,#2a1808 45%,#1a0d05 100%);box-shadow:inset 0 0 0 .3cqw #c89828,inset 0 0 0 .45cqw #1a0d05,inset 0 0 3cqw #00000088}
+#shop h1{font-size:2.2cqw;color:#ffd166;text-shadow:.3cqw .3cqw 0 #000,0 0 1.2cqw #ffd16666}
+#shop h1::before,#shop h1::after{content:'';display:inline-block;width:2.4cqw;height:2.4cqw;background-size:contain;background-repeat:no-repeat;vertical-align:middle;margin:0 .8cqw;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffd166' d='M12 1C6.5 1 2 5.5 2 11c0 2.9 1.3 5.3 3.4 6.9V22h3.1v-2h2v2h3v-2h2v2h3.1v-4.1C20.7 16.3 22 13.9 22 11 22 5.5 17.5 1 12 1z'/%3E%3Ccircle fill='%231a0d05' cx='8.5' cy='11' r='2.2'/%3E%3Ccircle fill='%231a0d05' cx='15.5' cy='11' r='2.2'/%3E%3Cpath fill='%231a0d05' d='M12 14.5l-1.2 2.6h2.4z'/%3E%3C/svg%3E")}
+#shop #shInfo{color:#ffd166}
+#shop .shb-title{color:#ffd166}
+#shop .shb-item{background:linear-gradient(180deg,#3a2412,#1a0d05);border:.15cqw solid #c89828;color:#f2e3c0;text-shadow:none}
+#shop .sh-main{gap:.4cqw}
+#shop .shop-grid{flex-direction:column;flex-wrap:nowrap;max-width:72cqw;gap:.4cqw}
+#shop .shop-card{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:1cqw;align-items:center;width:100%;padding:.25cqw .9cqw;background:linear-gradient(180deg,#4a3016 0%,#2a1808 45%,#1a0d05 100%);border:.2cqw solid #c89828;color:#f2e3c0;text-shadow:.15cqw .15cqw 0 #000}
+#shop .shop-card:hover{border-color:#ffd166}
+#shop .shop-card canvas{grid-column:1;grid-row:1/3;width:4.8cqw;height:3cqw}
+#shop .shop-card .nm{grid-column:2;grid-row:1;text-align:left;font-size:1.05cqw}
+#shop .shop-card .ds{grid-column:2;grid-row:2;text-align:left;font-size:.7cqw}
+#shop .shop-card .pr{position:static;grid-column:3;grid-row:1/3;align-self:center;background:linear-gradient(180deg,#3a2a1a,#1a0d05);border-color:#c89828;color:#ffd166;font-size:1cqw}
+#shop .b{padding:.5cqw 1.6cqw;font-size:1.2cqw;background:linear-gradient(180deg,#ffe9a0 0%,#d9b13b 45%,#8a6a1a 100%);color:#3a2a1a;border-color:#c89828;text-shadow:none}
+#shop .sh-upg-title{color:#ffd166}
+#godMode{background:linear-gradient(180deg,#3a2412,#1a0d05);border-color:#c89828}
 </style></head><body>
 <div id="wrap" tabindex="0"><canvas id="c" width="640" height="360"></canvas>
 <div class="ui">
@@ -134,15 +169,16 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
  <div id="hotbar" hidden></div><div id="hbTip" hidden></div><div id="hbGhost" hidden></div>
  <div id="discardPop" hidden><div id="discardPopName"></div><div class="opt-row" id="discardPopQtyRow"><button class="opt-btn" id="discardPopMinus">−</button><span id="discardPopQty">1</span><button class="opt-btn" id="discardPopPlus">+</button></div><button class="b" id="discardPopOk">DESCARTAR</button></div>
  <div id="godMode" hidden>GOD MODE</div>
- <div class="ov" id="menu"><h1>THE LAST WAVE</h1>
+ <div class="ov" id="menu"><div class="menu-layout"><div class="menu-left"><h1>THE LAST WAVE</h1>
   <div class="char-title">ELIGE TU PERSONAJE</div>
   <div id="charSel"></div>
-  <small id="recMenu"></small>
+  <small id="recMenu"></small></div>
+  <div class="menu-right">
   <button class="b" id="play">JUGAR</button>
   <button class="menu-btn" id="btnMenuControls">CONTROLES</button>
   <button class="menu-btn" id="btnMenuOptions">OPCIONES</button>
   <button class="menu-btn" id="btnMenuHelp">AYUDA</button>
-  <button class="menu-btn" id="btnMenuExit">SALIR DEL JUEGO</button></div>
+  <button class="menu-btn" id="btnMenuExit">SALIR DEL JUEGO</button></div></div></div>
  <div class="ov" id="dead" hidden><h1>HAS MUERTO</h1><div id="dres"></div><div id="recDead"></div><button class="b" id="again">REINTENTAR (R)</button><button class="menu-btn" id="btnDeadMenu">IR A MENU PRINCIPAL</button></div>
  <div class="ov" id="shop" hidden><div class="sh-wrap"><div id="shBought"><div class="shb-title">TUS COMPRAS</div><div id="shBoughtList"></div></div><div class="sh-main"><h1>TIENDA</h1><small id="shInfo"><canvas id="shIco" width="16" height="16"></canvas><span id="shInfoT"></span></small><div id="shItems" class="shop-grid"></div><div id="shUpgTitle" class="sh-upg-title"></div><div id="shUpg" class="shop-grid"></div><button class="b" id="nextWave">SIGUIENTE OLEADA →</button><div id="shMsg"></div></div></div></div>
  <div class="ov" id="pause" hidden><h1>PAUSA</h1><button class="menu-btn" id="btnResume">CONTINUAR</button><button class="menu-btn" id="btnControls">CONTROLES</button><button class="menu-btn" id="btnOptions">OPCIONES</button>
@@ -707,11 +743,11 @@ let km={};
 function rebuildKm(){km={};km[BIND.up]='u';km[BIND.down]='d';km[BIND.left]='l';km[BIND.right]='r';km[BIND.run]='sh';km['ArrowUp']='u';km['ArrowDown']='d';km['ArrowLeft']='l';km['ArrowRight']='r'}
 /* ---------- PERSONAJES (5 sprites distintos) ---------- */
 const CHARS=[
- {n:'CLÁSICO',shirt:'#5a6b4a',pants:'#2f3e56',skin:'#d9a878',hair:'#3a2a1c',hairStyle:0},
- {n:'ROJO',shirt:'#a02828',pants:'#23232c',skin:'#e8b888',hair:'#141414',hairStyle:1},
- {n:'RUBIO',shirt:'#2a5a9a',pants:'#4a4a52',skin:'#c89868',hair:'#d9b13b',hairStyle:2},
- {n:'GORRA',shirt:'#e8742c',pants:'#5a3a1a',skin:'#d9a878',hair:'#c02818',hairStyle:3,hairUnder:'#3a2a1c'},
- {n:'VIOLETA',shirt:'#7a3a9a',pants:'#1e1e26',skin:'#b87858',hair:'#e8e8e8',hairStyle:1}];
+ {n:'Dante',shirt:'#5a6b4a',pants:'#2f3e56',skin:'#d9a878',hair:'#3a2a1c',hairStyle:0},
+ {n:'Elena',shirt:'#a02828',pants:'#23232c',skin:'#e8b888',hair:'#141414',hairStyle:1},
+ {n:'Leo',shirt:'#2a5a9a',pants:'#4a4a52',skin:'#c89868',hair:'#d9b13b',hairStyle:2},
+ {n:'Max',shirt:'#e8742c',pants:'#5a3a1a',skin:'#d9a878',hair:'#c02818',hairStyle:3,hairUnder:'#3a2a1c'},
+ {n:'Luna',shirt:'#7a3a9a',pants:'#1e1e26',skin:'#b87858',hair:'#e8e8e8',hairStyle:1}];
 let charIdx=0;
 function loadChar(){try{if(typeof localStorage!=='undefined'){const s=localStorage.getItem('ultima_oleada_char');if(s!==null){const i=parseInt(s,10);if(i>=0&&i<CHARS.length)charIdx=i}}}catch(e){}}
 function saveChar(){try{if(typeof localStorage!=='undefined')localStorage.setItem('ultima_oleada_char',String(charIdx))}catch(e){}}
@@ -746,14 +782,14 @@ const pause=()=>{if(st==='play')openPause();else if(st==='pause'){if(!$('control
 /* ---------- DIBUJOS DE LA TIENDA (pixel art en canvas 64x40) ---------- */
 function drawShopIcon(cv,id){const c=cv.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,64,40);
  const R=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h)};
- if(id==='pistol'){R(16,14,26,5,'#2a2a2e');R(16,14,26,1,'#5a5a62');R(16,18,26,1,'#111');R(36,19,7,10,'#7a4a21');R(36,19,7,2,'#9a6a31');R(36,27,7,2,'#4a2a10');R(30,19,3,4,'#1a1a1a');R(16,14,3,5,'#1a1a1a');R(16,14,2,1,'#7a7a82')}
- else if(id==='esc'){R(6,16,34,5,'#2a2a2e');R(6,16,34,1,'#5a5a62');R(6,20,34,1,'#111');R(40,14,14,9,'#7a4a21');R(40,14,14,2,'#9a6a31');R(40,21,14,2,'#4a2a10');R(18,21,12,5,'#5a3a1a');R(18,21,12,1,'#7a5a2a');R(40,23,4,5,'#1a1a1a');R(6,16,4,5,'#1a1a1a');R(6,16,2,1,'#7a7a82')}
- else if(id==='smg'){R(10,16,30,5,'#2a2a2e');R(10,16,30,1,'#5a5a62');R(10,20,30,1,'#111');R(40,14,10,8,'#3a3a3a');R(40,14,10,2,'#5a5a62');R(22,21,5,10,'#1a1a1a');R(46,18,6,4,'#7a4a21');R(46,18,6,1,'#9a6a31');R(10,16,3,5,'#1a1a1a');R(10,16,2,1,'#7a7a82')}
- else if(id==='rif'){R(4,17,44,4,'#2a2a2e');R(4,17,44,1,'#5a5a62');R(4,20,44,1,'#111');R(48,15,10,8,'#5a3a1a');R(48,15,10,2,'#7a5a2a');R(20,12,10,4,'#1a1a1a');R(20,12,10,1,'#3a3a3a');R(22,21,4,8,'#1a1a1a');R(4,17,3,4,'#1a1a1a');R(30,21,8,3,'#7a4a21');R(30,21,8,1,'#9a6a31')}
- else if(id==='ammo'){for(const bx of [18,28,38]){R(bx,14,6,18,'#d9b13b');R(bx,14,2,18,'#ffe9a0');R(bx+4,14,2,18,'#8a6a1a');R(bx+1,10,4,4,'#8a8a8a');R(bx+1,10,4,1,'#c8c8c8')}R(16,32,32,3,'#7a5a0a')}
- else if(id==='med'){R(20,10,24,20,'#f0f0f0');R(20,10,24,2,'#ffffff');R(20,28,24,2,'#b8b8b8');R(20,10,2,20,'#d8d8d8');R(29,15,6,10,'#c0283a');R(26,18,12,4,'#c0283a');R(29,15,6,2,'#e84858');R(26,18,12,1,'#e84858')}
- else if(id==='med2'){R(16,8,32,24,'#f0f0f0');R(16,8,32,2,'#ffffff');R(16,30,32,2,'#b8b8b8');R(16,8,2,24,'#d8d8d8');R(29,14,6,12,'#1e7a1e');R(25,18,14,5,'#1e7a1e');R(29,14,6,2,'#2a9a2a');R(25,18,14,1,'#2a9a2a')}
- else if(id==='arm'){R(20,10,24,22,'#4a7ab8');R(20,10,24,2,'#7aa8d8');R(20,10,2,22,'#7aa8d8');R(20,30,24,2,'#2a4a6a');R(20,10,8,6,'#2a4a6a');R(36,10,8,6,'#2a4a6a');R(20,18,24,3,'#2a4a6a');R(28,22,8,6,'#ffd166');R(28,22,8,2,'#fff3b0');R(28,26,8,2,'#b89a2a')}
+ if(id==='pistol'){R(8,13,30,6,'#2a2a2e');R(8,13,30,1,'#6a6a72');R(8,18,30,1,'#0a0a0a');R(6,14,2,4,'#1a1a1a');R(6,14,2,1,'#3a3a3a');R(10,11,2,2,'#5a5a62');R(34,11,3,2,'#5a5a62');R(29,14,1,4,'#111');R(32,14,1,4,'#111');R(36,19,10,12,'#7a4a21');R(36,19,10,2,'#a8763a');R(36,29,10,2,'#4a2a10');R(39,22,4,6,'#9a6a31');R(39,22,4,1,'#c89858');R(31,19,3,5,'#1a1a1a');R(40,11,3,2,'#3a3a3a')}
+ else if(id==='esc'){R(4,14,40,5,'#2a2a2e');R(4,14,40,1,'#6a6a72');R(4,18,40,1,'#0a0a0a');R(4,19,30,3,'#1e1e22');R(4,19,30,1,'#3a3a3a');R(14,19,14,5,'#5a3a1a');R(14,19,14,1,'#7a5a2a');R(14,23,14,1,'#3a2410');R(44,13,12,9,'#7a4a21');R(44,13,12,2,'#a8763a');R(44,20,12,2,'#4a2a10');R(54,13,3,9,'#1a1a1a');R(54,13,3,1,'#3a3a3a');R(40,23,3,4,'#1a1a1a');R(5,12,2,2,'#ffd166');R(36,14,1,5,'#111')}
+ else if(id==='smg'){R(8,15,34,6,'#2a2a2e');R(8,15,34,1,'#6a6a72');R(8,20,34,1,'#0a0a0a');R(42,16,10,4,'#1e1e22');R(42,16,10,1,'#3a3a3a');R(20,21,6,10,'#1a1a1a');R(20,21,2,10,'#3a3a3a');R(20,29,6,2,'#111');R(30,21,5,6,'#1a1a1a');R(2,16,6,6,'#5a3a1a');R(2,16,6,1,'#7a5a2a');R(2,21,6,1,'#3a2410');R(44,13,2,3,'#5a5a62');R(36,12,3,3,'#3a3a3a')}
+ else if(id==='rif'){R(2,16,44,4,'#2a2a2e');R(2,16,44,1,'#6a6a72');R(2,19,44,1,'#0a0a0a');R(20,11,12,4,'#1a1a1a');R(20,11,12,1,'#3a3a3a');R(22,15,2,1,'#3a3a3a');R(28,15,2,1,'#3a3a3a');R(46,14,12,8,'#5a3a1a');R(46,14,12,2,'#7a5a2a');R(46,20,12,2,'#3a2410');R(56,14,2,8,'#1a1a1a');R(28,20,4,6,'#1a1a1a');R(28,20,1,6,'#3a3a3a');R(36,20,3,3,'#3a3a3a');R(38,22,2,3,'#1a1a1a');R(42,23,2,3,'#1a1a1a');R(4,13,2,3,'#5a5a62')}
+ else if(id==='ammo'){for(const bx of [16,27,38]){R(bx,14,7,18,'#d9b13b');R(bx,14,2,18,'#ffe9a0');R(bx+5,14,2,18,'#8a6a1a');R(bx+1,10,5,4,'#8a8a8a');R(bx+1,10,5,1,'#d8d8d8');R(bx+2,8,3,2,'#c8c8c8')}R(14,32,34,3,'#5a3a1a');R(14,32,34,1,'#7a5a2a')}
+ else if(id==='med'){R(26,7,12,3,'#3a3a3a');R(26,7,12,1,'#5a5a5a');R(18,10,28,20,'#f0f0f0');R(18,10,28,2,'#ffffff');R(18,28,28,2,'#b8b8b8');R(18,10,2,20,'#d8d8d8');R(44,10,2,20,'#c8c8c8');R(29,14,6,12,'#c0283a');R(29,14,6,2,'#e84858');R(25,17,14,5,'#c0283a');R(25,17,14,1,'#e84858');R(18,10,28,1,'#8a8a8a');R(18,29,28,1,'#8a8a8a');R(18,10,1,20,'#8a8a8a');R(45,10,1,20,'#8a8a8a')}
+ else if(id==='med2'){R(24,5,16,3,'#3a3a3a');R(24,5,16,1,'#5a5a5a');R(14,8,36,24,'#f0f0f0');R(14,8,36,2,'#ffffff');R(14,30,36,2,'#b8b8b8');R(14,8,2,24,'#d8d8d8');R(48,8,2,24,'#c8c8c8');R(29,13,6,14,'#1e7a1e');R(29,13,6,2,'#2a9a2a');R(24,17,16,5,'#1e7a1e');R(24,17,16,1,'#2a9a2a');R(14,8,36,1,'#8a8a8a');R(14,31,36,1,'#8a8a8a');R(14,8,1,24,'#8a8a8a');R(49,8,1,24,'#8a8a8a')}
+ else if(id==='arm'){R(20,10,24,22,'#4a7ab8');R(20,10,24,2,'#8ab8e8');R(20,10,2,22,'#8ab8e8');R(20,30,24,2,'#2a4a6a');R(42,10,2,22,'#2a4a6a');R(16,12,6,8,'#3a6a9a');R(16,12,6,2,'#6a9ac8');R(42,12,6,8,'#3a6a9a');R(42,12,6,2,'#6a9ac8');R(30,12,4,18,'#6a9ac8');R(30,12,4,2,'#9ac8e8');R(29,17,6,7,'#ffd166');R(29,17,6,2,'#fff3b0');R(29,22,6,2,'#b89a2a');R(22,12,2,2,'#2a4a6a');R(40,12,2,2,'#2a4a6a');R(22,28,2,2,'#2a4a6a');R(40,28,2,2,'#2a4a6a')}
  else if(id==='fist'){R(22,32,20,8,'#3a4a5a');R(22,32,20,2,'#5a6a7a');R(16,14,32,18,'#d9a878');R(16,14,32,2,'#e8c898');R(16,28,32,4,'#b07848');R(17,10,6,6,'#e8c898');R(25,9,6,7,'#e8c898');R(33,9,6,7,'#e8c898');R(41,10,6,6,'#e8c898');R(23,10,1,6,'#b07848');R(31,9,1,7,'#b07848');R(39,10,1,6,'#b07848');R(23,16,1,12,'#b07848');R(31,16,1,12,'#b07848');R(39,16,1,12,'#b07848');R(16,22,22,5,'#c89868');R(16,22,22,2,'#e8c898');R(16,22,22,1,'#f0d0a8');R(16,30,22,2,'#a06838')}
 }
 /* ---------- ICONOS PEQUEÑOS DEL HUD (16x16) ---------- */
@@ -773,8 +809,8 @@ let bought=[];
 function renderBought(){const c=$('shBoughtList');c.innerHTML='';if(!bought.length){c.innerHTML='<div class="shb-empty">Nada todavía</div>';return}bought.forEach(id=>{const it=SHOP.find(s=>s.id===id);if(!it)return;const d=document.createElement('div');d.className='shb-item';const cv=document.createElement('canvas');cv.width=64;cv.height=40;d.appendChild(cv);drawShopIcon(cv,id);const nm=document.createElement('span');nm.textContent=it.n;d.appendChild(nm);c.appendChild(d)})}
 function drawUpgIcon(cv,kind){const c=cv.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,64,40);
  const R=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h)};
- if(kind==='dmg'){R(28,6,8,14,'#e8742c');R(28,6,8,2,'#ff9a3a');R(20,12,24,8,'#e8742c');R(20,12,24,2,'#ff9a3a');R(28,20,8,14,'#c0283a');R(28,20,8,2,'#e84858');R(28,32,8,2,'#701010')}
- else if(kind==='mag'){for(const bx of [18,28,38]){R(bx,14,6,18,'#d9b13b');R(bx,14,2,18,'#ffe9a0');R(bx+4,14,2,18,'#8a6a1a');R(bx+1,10,4,4,'#8a8a8a');R(bx+1,10,4,1,'#c8c8c8')}R(16,32,32,3,'#7a5a0a')}
+ if(kind==='dmg'){R(26,8,12,3,'#c0283a');R(22,11,20,3,'#c0283a');R(20,14,24,12,'#c0283a');R(22,26,20,3,'#c0283a');R(26,29,12,3,'#c0283a');R(28,12,8,2,'#f0f0f0');R(25,14,14,2,'#f0f0f0');R(24,16,16,8,'#f0f0f0');R(25,24,14,2,'#f0f0f0');R(28,26,8,2,'#f0f0f0');R(29,16,6,2,'#c0283a');R(28,18,8,4,'#c0283a');R(29,22,6,2,'#c0283a');R(30,2,4,4,'#ffd166');R(30,34,4,4,'#ffd166');R(4,18,6,4,'#ffd166');R(54,18,6,4,'#ffd166')}
+ else if(kind==='mag'){R(26,8,3,8,'#d9b13b');R(26,8,3,1,'#ffe9a0');R(30,6,3,10,'#d9b13b');R(30,6,3,1,'#ffe9a0');R(35,8,3,8,'#d9b13b');R(35,8,3,1,'#ffe9a0');R(24,16,16,18,'#2a2a2e');R(24,16,2,18,'#5a5a62');R(24,32,16,2,'#111');R(22,32,20,3,'#1a1a1a');R(22,32,20,1,'#3a3a3a')}
  else if(kind==='rel'){R(22,8,20,24,'#4a7ab8');R(22,8,20,2,'#7aa8d8');R(22,8,2,24,'#7aa8d8');R(22,30,20,2,'#2a4a6a');R(30,14,4,10,'#f0f0f0');R(30,14,10,4,'#f0f0f0');R(30,14,4,2,'#ffffff');R(30,14,10,1,'#ffffff')}
 }
 function renderUpg(){const uw=upgWi(),t=$('shUpgTitle'),c=$('shUpg');t.textContent='MEJORAS — '+WP[uw].n;c.innerHTML='';
