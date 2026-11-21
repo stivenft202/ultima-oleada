@@ -73,9 +73,10 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;background
 #dashCd{font-size:1cqw}
 #streak{color:#e8742c}
 #godMode{position:absolute;bottom:1cqw;left:1.5cqw;font-size:1.3cqw;color:#ffd166;background:#000a;border:.2cqw solid #ffd166;padding:.5cqw .8cqw;z-index:15;text-shadow:.15cqw .15cqw 0 #000}
-#discardName{font-size:1.3cqw;color:#ffd166}
-#discardQty{font-size:1.6cqw;min-width:3.5cqw;text-align:center;align-self:center}
-#discardInfo{font-size:1.1cqw;color:#e8e8e8}
+#discardPop{position:absolute;z-index:22;background:#1a0d05f2;border:.25cqw solid #c0283a;border-radius:.5cqw;padding:.6cqw .9cqw;display:flex;flex-direction:column;align-items:center;gap:.5cqw;transform:translate(-50%,-100%);box-shadow:0 .4cqw #000a;white-space:nowrap;pointer-events:auto}
+#discardPopName{font-size:1.2cqw;color:#ffd166}
+#discardPopQty{font-size:1.4cqw;min-width:2.5cqw;text-align:center;align-self:center}
+#discardPopOk{font-size:1.1cqw;padding:.5cqw 1cqw}
 .sh-upg-title{font-size:1.05cqw;color:#ffd166;margin-top:.2cqw}
 #shop.ov{padding:1.2cqw}
 #shop h1{font-size:2.6cqw}
@@ -120,7 +121,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;background
  <div class="tr"><div id="kl"><canvas id="klIco" width="16" height="16"></canvas><span id="klT">Abatidos: 0</span></div><div id="wv">Oleada: 1</div><div id="mn"><canvas id="mnIco" width="16" height="16"></canvas><span id="mnT">$ 0</span></div><div id="zc"><canvas id="zcIco" width="16" height="16"></canvas><span id="zcT">Zombis: 10</span></div><div id="streak" hidden></div><div id="clock"><canvas id="clockIco" width="16" height="16"></canvas><span id="clockT">08:00</span><canvas id="wxIco" width="16" height="16"></canvas></div></div>
  <div id="toast"></div>
  <div id="hotbar" hidden></div><div id="hbTip" hidden></div><div id="hbGhost" hidden></div>
- <div class="ov" id="discard" hidden><h1>DESCARTAR</h1><div id="discardName"></div><div class="opt-row" id="discardQtyRow"><button class="opt-btn" id="discardMinus">−</button><span id="discardQty">1</span><button class="opt-btn" id="discardPlus">+</button></div><div id="discardInfo"></div><button class="b" id="discardOk">DESCARTAR</button><button class="menu-btn" id="discardCancel">CANCELAR</button></div>
+ <div id="discardPop" hidden><div id="discardPopName"></div><div class="opt-row" id="discardPopQtyRow"><button class="opt-btn" id="discardPopMinus">−</button><span id="discardPopQty">1</span><button class="opt-btn" id="discardPopPlus">+</button></div><button class="b" id="discardPopOk">DESCARTAR</button></div>
  <div id="godMode" hidden>GOD MODE</div>
  <div class="ov" id="menu"><h1>THE LAST WAVE</h1>
   <div class="char-title">ELIGE TU PERSONAJE</div>
@@ -775,19 +776,21 @@ addEventListener('mouseup',e=>{if(dragFrom<0)return;hbGhostHide();const s=e.targ
 $('hotbar').addEventListener('mouseover',e=>{const s=e.target.closest&&e.target.closest('.slot');if(!s)return;const sl=hotbar[+s.dataset.slot];if(sl){const it=hbItem(sl.id);$('hbTip').innerHTML='<b>'+it.n+(sl.n>1?' x'+sl.n:'')+'</b><br>'+it.d;$('hbTip').hidden=false}else $('hbTip').hidden=true});
 $('hotbar').addEventListener('mouseout',e=>{const s=e.target.closest&&e.target.closest('.slot');if(!s)return;const to=e.relatedTarget&&e.relatedTarget.closest?e.relatedTarget.closest('.slot'):null;if(to!==s)$('hbTip').hidden=true});
 /* ---------- DESCARTAR OBJETOS (clic derecho en una ranura) ---------- */
-/* El juego se pausa mientras el panel está abierto (el bucle no llama a
-   upd() con discardOpen). El puño no se puede descartar: es permanente. */
+/* Opcioncita pequeña justo arriba de la ranura: no es un menú grande y NO
+   pausa el juego. Se cierra al descartar, al hacer clic fuera o con ESC.
+   El puño no se puede descartar: es permanente. */
 let discardSlot=-1,discardQty=1,discardOpen=false;
 function discardMax(){const s=discardSlot>=0?hotbar[discardSlot]:null;return s?s.n:0}
-function openDiscard(i){const s=hotbar[i];if(!s)return;if(s.id==='fist'){toast('El puño no se puede descartar');return}discardSlot=i;discardQty=1;discardOpen=true;$('discardName').textContent=hbItem(s.id).n+(s.n>1?' x'+s.n:'');$('discardQty').textContent='1';$('discardQtyRow').style.display=s.n>1?'flex':'none';$('discardInfo').textContent=s.n>1?'¿Cuántos descartas? (máx. '+s.n+')':'Vas a descartar este objeto';$('discard').hidden=false}
-function closeDiscard(){discardSlot=-1;discardOpen=false;$('discard').hidden=true}
-function discardQtySet(n){discardQty=Math.max(1,Math.min(discardMax(),n));$('discardQty').textContent=''+discardQty}
+function discardPlace(){const pop=$('discardPop');const slotEl=$('hotbar').children[discardSlot];const w=$('wrap').getBoundingClientRect();const r=slotEl&&slotEl.getBoundingClientRect?slotEl.getBoundingClientRect():{left:w.left+w.width/2,top:w.top+w.height,width:0,height:0};const cx=r.left-w.left+r.width/2;const pw=pop.offsetWidth||0,ww=w.width||640;pop.style.left=Math.max(pw/2+4,Math.min(ww-pw/2-4,cx))+'px';pop.style.top=(r.top-w.top-6)+'px'}
+function openDiscard(i){const s=hotbar[i];if(!s)return;if(s.id==='fist'){toast('El puño no se puede descartar');return}discardSlot=i;discardQty=1;discardOpen=true;$('discardPopName').textContent=hbItem(s.id).n+(s.n>1?' x'+s.n:'');$('discardPopQty').textContent='1';$('discardPopQtyRow').style.display=s.n>1?'flex':'none';$('hbTip').hidden=true;const pop=$('discardPop');pop.hidden=false;discardPlace()}
+function closeDiscard(){discardSlot=-1;discardOpen=false;$('discardPop').hidden=true}
+function discardQtySet(n){discardQty=Math.max(1,Math.min(discardMax(),n));$('discardPopQty').textContent=''+discardQty}
 function discardConfirm(){const i=discardSlot,s=hotbar[i];if(!s){closeDiscard();return}const wasSel=i===sel;s.n-=discardQty;if(s.n<=0){hotbar[i]=null;if(wasSel){const f=hotbar.findIndex(x=>x&&x.id==='fist');if(f>=0)hbSelect(f);else{const w=hotbar.findIndex(x=>x&&hbIsWep(x.id));hbSelect(w>=0?w:0)}}}closeDiscard();renderHotbar()}
-$('discardMinus').onclick=()=>discardQtySet(discardQty-1);
-$('discardPlus').onclick=()=>discardQtySet(discardQty+1);
-$('discardOk').onclick=discardConfirm;
-$('discardCancel').onclick=closeDiscard;
+$('discardPopMinus').onclick=()=>discardQtySet(discardQty-1);
+$('discardPopPlus').onclick=()=>discardQtySet(discardQty+1);
+$('discardPopOk').onclick=discardConfirm;
 $('hotbar').addEventListener('contextmenu',e=>{e.preventDefault();const s=e.target.closest&&e.target.closest('.slot');if(!s)return;openDiscard(+s.dataset.slot)});
+addEventListener('mousedown',e=>{if(discardOpen){const pop=$('discardPop');if(pop.contains&&!pop.contains(e.target))closeDiscard()}});
 /* ---------- MENÚ DE PAUSA ---------- */
 function openPause(){st='pause';$('menu').hidden=$('dead').hidden=$('shop').hidden=true;$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('pause').hidden=false;toast('')}
 function closePause(){st='play';$('pause').hidden=$('controls').hidden=$('options').hidden=$('help').hidden=true;$('wrap').focus()}
@@ -817,17 +820,17 @@ $('musicBtn').onclick=()=>setMusic(!musicOn);
 $('diffEasy').onclick=()=>setDiff('FACIL');
 $('diffNormal').onclick=()=>setDiff('NORMAL');
 $('diffHard').onclick=()=>setDiff('DIFICIL');
-addEventListener('keydown',e=>{if(capturing){handleCaptureKey(e);return}dev='kb';if(discardOpen){if(e.code==='Escape'){e.preventDefault();closeDiscard()}return}if(e.code==='F11'||e.code==='F12'){if(!godMode)return;e.preventDefault();if(e.repeat)return;if(e.code==='F11'){if(timePanelOpen)closeTimePanel(false);else if(wxWheelOpen)closeWxWheel();else openTimePanel()}else{if(wxWheelOpen)closeWxWheel();else if(timePanelOpen)closeTimePanel(false);else openWxWheel()}return}if(timePanelOpen||wxWheelOpen){if(e.code==='Escape'){e.preventDefault();if(timePanelOpen)closeTimePanel(false);else closeWxWheel()}return}if(km[e.code]){K[km[e.code]]=1;e.preventDefault()}if(e.code===BIND.reload){st==='dead'?newGame():reload()}
+addEventListener('keydown',e=>{if(capturing){handleCaptureKey(e);return}dev='kb';if(discardOpen&&e.code==='Escape'){e.preventDefault();closeDiscard();return}if(e.code==='F11'||e.code==='F12'){if(!godMode)return;e.preventDefault();if(e.repeat)return;if(e.code==='F11'){if(timePanelOpen)closeTimePanel(false);else if(wxWheelOpen)closeWxWheel();else openTimePanel()}else{if(wxWheelOpen)closeWxWheel();else if(timePanelOpen)closeTimePanel(false);else openWxWheel()}return}if(timePanelOpen||wxWheelOpen){if(e.code==='Escape'){e.preventDefault();if(timePanelOpen)closeTimePanel(false);else closeWxWheel()}return}if(km[e.code]){K[km[e.code]]=1;e.preventDefault()}if(e.code===BIND.reload){st==='dead'?newGame():reload()}
  if(e.code===BIND.god&&!e.repeat)toggleGodMode();if(e.code==='End'&&godMode&&st==='play')finishWave();
  if(e.code===BIND.clock&&!e.repeat){e.preventDefault();setClockVisible(!clockVisible)}
  if(godMode&&(st==='play'||st==='shop')&&!e.repeat){if(e.code===BIND.moneyUp){e.preventDefault();money+=100;toast('+$100')}else if(e.code===BIND.moneyDown){e.preventDefault();money=Math.max(0,money-100);toast('-$100')}}
- if(st==='play'&&!discardOpen){if(e.code===BIND.slot0)hbUse(0);if(e.code===BIND.slot1)hbUse(1);if(e.code===BIND.slot2)hbUse(2);if(e.code===BIND.slot3)hbUse(3);if(e.code===BIND.slot4)hbUse(4);if(e.code===BIND.slot5)hbUse(5);
+ if(st==='play'){if(e.code===BIND.slot0)hbUse(0);if(e.code===BIND.slot1)hbUse(1);if(e.code===BIND.slot2)hbUse(2);if(e.code===BIND.slot3)hbUse(3);if(e.code===BIND.slot4)hbUse(4);if(e.code===BIND.slot5)hbUse(5);
   if(e.code===BIND.dash){e.preventDefault();if(!e.repeat&&P.dashCd<=0){let dx=(K.r-K.l)+PD.x,dy=(K.d-K.u)+PD.y;const m=Math.hypot(dx,dy);if(m>.1){dx/=m;dy/=m}else{dx=Math.cos(aim);dy=Math.sin(aim)}P.dashX=dx;P.dashY=dy;P.dashT=.18;P.dashCd=1.2}}}
  if(e.code===BIND.pause||e.code==='Escape')pause();if(e.code===BIND.mute){mute=!mute;if(out)out.gain.value=mute?0:vol}if(e.code===BIND.gore){gore=!gore;toast('Gore '+(gore?'intenso':'reducido'))}});
 addEventListener('keyup',e=>{if(km[e.code])K[km[e.code]]=0});
 cv.addEventListener('mousemove',e=>{dev='kb';const r=cv.getBoundingClientRect();mx=(e.clientX-r.left)*VW/r.width;my=(e.clientY-r.top)*VH/r.height});
-cv.addEventListener('mousedown',e=>{dev='kb';if(e.button===0&&!discardOpen)md=1});addEventListener('mouseup',()=>md=0);cv.addEventListener('contextmenu',e=>e.preventDefault());
-cv.addEventListener('wheel',e=>{if(st!=='play'||discardOpen)return;e.preventDefault();const d=e.deltaY>0?1:-1;hbSelect((sel+d+HB_N)%HB_N)},{passive:false});
+cv.addEventListener('mousedown',e=>{dev='kb';if(e.button===0)md=1});addEventListener('mouseup',()=>md=0);cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('wheel',e=>{if(st!=='play')return;e.preventDefault();const d=e.deltaY>0?1:-1;hbSelect((sel+d+HB_N)%HB_N)},{passive:false});
 function pad(){let g;try{g=[...(navigator.getGamepads?navigator.getGamepads():[])].find(p=>p)}catch(e){return}if(!g)return;const dz=v=>Math.abs(v)<.22?0:v,b=i=>g.buttons[i]&&g.buttons[i].pressed;
  PD.x=dz(g.axes[0]);PD.y=dz(g.axes[1]);PD.rx=dz(g.axes[2]);PD.ry=dz(g.axes[3]);PD.fire=(g.buttons[7]&&g.buttons[7].value>.4)||b(5)?1:0;PD.run=b(1)||b(10)?1:0;
  const rl=b(2),sta=b(9);if(rl&&!PD.rl)reload();if(sta&&!PD.start)pause();PD.rl=rl;PD.start=sta;
@@ -1020,7 +1023,7 @@ function render(){
  else{const rx=lx+Math.cos(aim)*60,ry=ly+Math.sin(aim)*60;R(rx-3,ry,7,1,'#fff');R(rx,ry-3,1,7,'#fff')}
  $('hpb').style.width=P.hp+'%';$('stb').style.width=P.st+'%';drawShopIcon($('wicon'),WICON[P.wi]);$('wname').textContent=WP[P.wi].n;if(P.wi===4){$('wammoMag').textContent='CUERPO A CUERPO';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else if(P.rl>0){$('wammoMag').textContent='RECARGANDO…';$('wammoRes').textContent='';$('wammoIco').style.display='none'}else{$('wammoMag').textContent=P.ammo+'/'+effMag(P.wi);$('wammoRes').textContent=''+P.res[P.wi];$('wammoIco').style.display=''}const dc=$('dashCd');dc.textContent=P.dashCd<=0?'DASH LISTO':'DASH '+Math.ceil(P.dashCd*10)/10+'s';dc.style.color=P.dashCd<=0?'#7ab83a':'#8a8a8a';const sk=$('streak');sk.hidden=streak<3;sk.textContent='RACHA x'+streak;$('wv').textContent='Oleada: '+wave;$('mnT').textContent='$ '+money;$('zcT').textContent='Zombis: '+((waveTotal-waveSpawned)+Z.length);$('hotbar').hidden=st!=='play';if(st!=='play')$('hbTip').hidden=true;
  $('clock').hidden=!clockVisible;$('clockT').textContent=fmtTime();drawMiniIcon($('clockIco'),(gameMin>=360&&gameMin<1080)?'sun':'moon');drawMiniIcon($('wxIco'),weather==='rain'?'rain':weather==='snow'?'snow':'sun')}
-let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play'&&!discardOpen)upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();if(P)render();requestAnimationFrame(loop)}
+let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();if(P)render();requestAnimationFrame(loop)}
 $('play').onclick=()=>{ac();newGame()};$('again').onclick=newGame;
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
 $('clockBtn').onclick=()=>setClockVisible(!clockVisible);
