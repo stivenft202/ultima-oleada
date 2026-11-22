@@ -401,6 +401,14 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
    #shInfo, TUS COMPRAS y el letrero #shNoMoney; el área interior
    (.sh-scroll, de 22.2 a 48.5 cqw) lleva TODOS los items (#shItems, #shArmor,
    #shUpg y SIGUIENTE OLEADA al final, como manda D1) con su propio scroll.
+   v2026-11-22e: SIGUIENTE OLEADA ya NO va dentro del scroll (pedido de
+   Stiven: el botón debe verse siempre, fijo abajo). El botón es hijo directo
+   de .sh-panel, absoluto, con su parte inferior a 7.75 cqw del borde inferior
+   (justo encima del borde inferior del marco, de 7.74 cqw): su alto medido es
+   6.68 cqw, así que ocupa de 41.82 a 48.5 cqw. El área de scroll se achica a
+   18.62 cqw de alto (de 22.2 a 40.82 cqw) para que los items no se deslicen
+   por debajo del botón fijo; queda 1 cqw de hueco entre el área y el botón.
+   Consecuencia inherente: se ven ~3,3 filas a la vez en vez de ~4,7.
    La barra queda justo a la derecha de la columna de items (58.6 cqw):
    el contenedor mide 60.2 cqw (58.6 de items + 1.6 de barra) y empieza en
    13 cqw dentro del panel, igual que las filas. El borde inferior del marco
@@ -410,9 +418,15 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
 #shop.ov{overflow:hidden}
 #shop .sh-wrap{height:56.25cqw}
 #shop .sh-wrap::after{position:absolute;left:50%;bottom:0;transform:translateX(-50%)}
-#shop .sh-scroll{position:absolute;left:13cqw;top:22.2cqw;width:60.2cqw;height:26.3cqw;overflow-y:auto}
+#shop .sh-scroll{position:absolute;left:13cqw;top:22.2cqw;width:60.2cqw;height:18.62cqw;overflow-y:auto}
 #shop .sh-scroll #shItems{position:static;left:auto;top:auto;width:58.6cqw}
 #shop .sh-scroll .sh-below{margin:1.5cqw 0 2cqw}
+/* v2026-11-22e: SIGUIENTE OLEADA fijo abajo, fuera del scroll. Mismo aspecto
+   dorado que antes (la regla de la línea 150 pone el degradado, la fuente y
+   el padding); aquí solo se fija su posición: misma columna que las filas
+   (left 13cqw, ancho 58.6cqw), con la parte inferior justo encima del borde
+   inferior del marco (bottom 7.75cqw). Sin margin-top: no va en el flujo. */
+#shop #nextWave{position:absolute;left:13cqw;bottom:7.75cqw;width:58.6cqw;margin:0}
 
 </style></head><body>
 <div id="wrap" tabindex="0"><canvas id="c" width="640" height="360"></canvas>
@@ -434,7 +448,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
   <button class="menu-btn" id="btnMenuHelp">AYUDA</button>
   <button class="menu-btn" id="btnMenuExit">SALIR DEL JUEGO</button></div></div></div>
  <div class="ov" id="dead" hidden><h1>HAS MUERTO</h1><div id="dres"></div><div id="recDead"></div><button class="b" id="again">REINTENTAR (R)</button><button class="menu-btn" id="btnDeadMenu">MENU PRINCIPAL</button></div>
- <div class="ov" id="shop" hidden><div class="sh-wrap"><div class="sh-panel"><div id="shNoMoney" hidden>DINERO INSUFICIENTE</div><div class="sh-title"><h1>TIENDA</h1></div><small id="shInfo"><span id="shInfoT"></span><canvas id="shIco" width="16" height="16"></canvas><span id="shInfoM"></span></small><div id="shBought"><span class="shb-title">TUS COMPRAS</span> · <span id="shBoughtList"></span></div><div class="sh-scroll"><div id="shItems" class="shop-grid"></div><div class="sh-below"><div id="shArmor" class="shop-grid"></div><div id="shUpgTitle" class="sh-upg-title"></div><div id="shUpg" class="shop-grid"></div><button class="b" id="nextWave">SIGUIENTE OLEADA →</button><div id="shMsg"></div></div></div><div id="shGod" style="display:none">GOD MODE</div></div></div></div>
+ <div class="ov" id="shop" hidden><div class="sh-wrap"><div class="sh-panel"><div id="shNoMoney" hidden>DINERO INSUFICIENTE</div><div class="sh-title"><h1>TIENDA</h1></div><small id="shInfo"><span id="shInfoT"></span><canvas id="shIco" width="16" height="16"></canvas><span id="shInfoM"></span></small><div id="shBought"><span class="shb-title">TUS COMPRAS</span> · <span id="shBoughtList"></span></div><div class="sh-scroll"><div id="shItems" class="shop-grid"></div><div class="sh-below"><div id="shArmor" class="shop-grid"></div><div id="shUpgTitle" class="sh-upg-title"></div><div id="shUpg" class="shop-grid"></div><div id="shMsg"></div></div></div><button class="b" id="nextWave">SIGUIENTE OLEADA →</button><div id="shGod" style="display:none">GOD MODE</div></div></div></div>
  <div class="ov" id="pause" hidden><h1>PAUSA</h1><button class="menu-btn" id="btnResume">CONTINUAR</button><button class="menu-btn" id="btnControls">CONTROLES</button><button class="menu-btn" id="btnOptions">OPCIONES</button>
 <button class="menu-btn" id="btnPauseHelp">AYUDA</button><button class="menu-btn" id="btnMainMenu">MENU PRINCIPAL</button><button class="menu-btn" id="btnExit">SALIR DEL JUEGO</button></div>
  <div class="ov" id="controls" hidden><h1>CONTROLES</h1><small>Haz clic en una tecla y pulsa la nueva · ESC o ENTER cancela · No se pueden usar ESC, ENTER ni F1-F12<br>Ratón — Apuntar · Clic izquierdo — Disparar / Puñetazo · Rueda — Cambiar de arma (llega al puño)<br>Flechas — Moverse igual que WASD (ya no cambian de ranura) · Teclas 1-6 — Seleccionar el arma o usar el objeto de la ranura (igual que hacer clic)<br>Barra inferior — Clic para seleccionar el arma o usar un objeto, arrastrar para moverlo a otra ranura<br>Mando Xbox — Stick izq. mover · Stick der. apuntar · RT disparar · X recargar · B correr · Start pausa</small><div id="ctrlList" class="ctrl-grid"></div><button class="menu-btn" id="btnResetKeys">RESTABLECER TECLAS</button><button class="menu-btn" id="btnControlsBack">VOLVER</button></div>
