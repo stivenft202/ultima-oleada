@@ -822,7 +822,7 @@ const ZT=[{hp:60,sp:[30,46],dmg:12,r:9,m:10},{hp:35,sp:[95,120],dmg:22,r:8,m:20}
    rate=segundos entre disparos, spread=dispersión, pel=perdigones,
    rel=segundos de recarga, res=reserva inicial, price=precio en tienda,
    pierce=cuántos zombis extra perfora la bala (rifle). */
-const WP=[{n:'PISTOLA',dmg:34,mag:12,spd:560,rate:.45,spread:.05,pel:1,rel:1.1,res:48},{n:'ESCOPETA',dmg:22,mag:6,spd:520,rate:.7,spread:.16,pel:6,rel:1.4,res:12,price:150},{n:'SUBFUSIL',dmg:18,mag:30,spd:600,rate:.09,spread:.08,pel:1,rel:1.2,res:60,price:200},{n:'RIFLE',dmg:70,mag:8,spd:800,rate:.9,spread:.02,pel:1,rel:1.5,res:16,price:250,pierce:2},{n:'PUÑO',dmg:12,mag:0,spd:0,rate:.45,spread:0,pel:0,rel:0,res:0}];
+const WP=[{n:'PISTOLA',dmg:34,mag:12,spd:560,rate:.55,spread:.05,pel:1,rel:1.1,res:48},{n:'ESCOPETA',dmg:22,mag:6,spd:520,rate:.7,spread:.16,pel:6,rel:1.4,res:12,price:150},{n:'SUBFUSIL',dmg:18,mag:30,spd:600,rate:.09,spread:.08,pel:1,rel:1.2,res:60,price:200},{n:'RIFLE',dmg:70,mag:8,spd:800,rate:.9,spread:.02,pel:1,rel:1.5,res:16,price:250,pierce:2},{n:'PUÑO',dmg:12,mag:0,spd:0,rate:.45,spread:0,pel:0,rel:0,res:0}];
 const WICON=['pistol','esc','smg','rif','fist'];
 /* Mejoras de armas (3 niveles cada una). dmg:+25%/nivel, mag:+50%/nivel, rel:-20%/nivel. */
 const UPG=[{key:'dmg',n:'DAÑO',d:'+25% de daño por nivel',costs:[80,150,250]},{key:'mag',n:'CARGADOR',d:'+50% de balas por nivel',costs:[60,120,200]},{key:'rel',n:'RECARGA',d:'-20% de tiempo por nivel',costs:[60,120,200]}];
@@ -996,7 +996,7 @@ function blood(x,y,vx,vy,n,chunk){if(!gore)n=Math.ceil(n/3);for(let i=0;i<n&&Pa.
 /* Objetos que caen al suelo (vida, munición, dinero). */
 function dropPickup(x,y){const q=Math.random();Pk.push({x,y,kind:q<.4?'hp':q<.7?'ammo':'money'})}
 function barrelBoom(tx,ty){const x=tx*T+16,y=ty*T+16;M[ty][tx]=0;paintTile(tx,ty);
- for(const z of Z){if(!z.dead&&Math.hypot(z.x-x,z.y-y)<80){sGrowlHurt();const d=Math.hypot(z.x-x,z.y-y);z.hp-=120;dmgNum(z.x,z.y-12,120);z.f=.15;if(z.hp<=0){z.dead=1;z.lastW=1;z.kb={vx:(z.x-x)*3,vy:(z.y-y)*3}}else if(d<40)tryDismemberZombie(z,1,true);else tryDismemberZombie(z,1,false)}}
+ for(const z of Z){if(!z.dead&&Math.hypot(z.x-x,z.y-y)<80){sGrowlHurt();const d=Math.hypot(z.x-x,z.y-y);z.hp-=120;dmgNum(z.x,z.y-12,120,z);z.f=.15;if(z.hp<=0){z.dead=1;z.lastW=1;z.kb={vx:(z.x-x)*3,vy:(z.y-y)*3}}else if(d<40)tryDismemberZombie(z,1,true);else tryDismemberZombie(z,1,false)}}
  /* El jugador también puede ser desmembrado por la explosión: muy raro,
     pero más probable si tiene poca salud. La explosión no le quita vida. */
  if(!godMode&&!P.dead&&!P.dying&&Math.hypot(P.x-x,P.y-y)<80){const p=P.hp<30?0.25:0.06;if(Math.random()<p)startDismemberDeath(Math.random()<0.5?'arm':'leg')}
@@ -1129,7 +1129,7 @@ function updDead(dt){
     for(let k=0;k<4&&!dead;k++){b.x+=b.vx*dt/4;b.y+=b.vy*dt/4;
      if(sol(b.x,b.y)){dead=true;const tx=Math.floor(b.x/T),ty=Math.floor(b.y/T),tt=(M[ty]&&M[ty][tx]!==undefined)?M[ty][tx]:2;
       if(tt===9||tt===4||tt===10||tt===17||tt===18)hitTileDmg(tx,ty,2)}
-     else for(let j=Z.length-1;j>=0;j--){const z=Z[j];if(!z.dead&&b.hit.indexOf(z)<0&&Math.hypot(z.x-b.x,z.y-12-b.y)<ZT[z.t].r){z.hp-=b.dmg;z.f=.1;sGrowlHurt();dmgNum(z.x,z.y-12,b.dmg);blood(z.x,z.y-12,b.vx,b.vy,9);b.hit.push(z);if(z.hp<=0){z.dead=1;z.kb=b}if(b.pierce>0)b.pierce--;else dead=true;break}}}
+     else for(let j=Z.length-1;j>=0;j--){const z=Z[j];if(!z.dead&&b.hit.indexOf(z)<0&&Math.hypot(z.x-b.x,z.y-12-b.y)<ZT[z.t].r){z.hp-=b.dmg;z.f=.1;sGrowlHurt();dmgNum(z.x,z.y-12,b.dmg,z);blood(z.x,z.y-12,b.vx,b.vy,9);b.hit.push(z);if(z.hp<=0){z.dead=1;z.kb=b}if(b.pierce>0)b.pierce--;else dead=true;break}}}
     if(dead||b.l<=0)Bu.splice(i,1)}
   for(let i=Sp.length-1;i>=0;i--){const s2=Sp[i];s2.l-=dt;s2.x+=s2.vx*dt;s2.y+=s2.vy*dt;if(s2.l<=0||sol(s2.x,s2.y))Sp.splice(i,1)}
   for(let i=Pa.length-1;i>=0;i--){const p=Pa[i];p.l-=dt;if(p.k==='f'){p.vy-=200*dt;p.vx*=.94;p.vy*=.94;p.s=Math.max(1,p.s-8*dt)}else if(p.k==='s'){p.vy-=60*dt;p.vx*=.96;p.vy*=.96;p.s+=12*dt}else{p.vx*=.93;p.vy*=.93}p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.l<=0){if(p.k==='f'||p.k==='s'){}else if(p.s===2&&p.c!=='#d9b13b')R2(sc,Math.round(p.x),Math.round(p.y),2,2,p.c);else if(p.s===4)R2(sc,Math.round(p.x),Math.round(p.y),4,4,p.c);Pa.splice(i,1)}}
@@ -1143,9 +1143,13 @@ function renderRec(){const t=rec.bestWave>0?('RÉCORD · Oleada '+rec.bestWave+'
 function updateRec(){rec.bestWave=Math.max(rec.bestWave,wave);rec.bestKills=Math.max(rec.bestKills,kills);rec.bestMoney=Math.max(rec.bestMoney,money);saveRec();renderRec()}
 /* Al morir, los números de daño del zombi desaparecen al instante (no
    esperan los 0,8 s que tardan en apagarse flotando): si no, se quedan
-   sobre el cadáver. Solo se borran los cercanos a este zombi (24 px);
-   los de otros zombis no se tocan. */
-function kill(z,b){for(let i=Dm.length-1;i>=0;i--){const d=Dm[i];if(Math.hypot(d.x-z.x,d.y-(z.y-12))<24)Dm.splice(i,1)}blood(z.x,z.y-10,b.vx,b.vy,26,1);stamp(z.x,z.y,rr(14,22),'#6e0c18');stamp(z.x,z.y,8,'#3e0610');
+   sobre el cadáver. Cada número guarda el zombi al que pertenece
+   (dmgNum recibe el zombi), así que al morir se borran TODOS los suyos,
+   aunque ya hayan flotado lejos o el zombi se haya movido: el radio de
+   24 px de la v22d no alcanzaba, porque los números de los golpes
+   anteriores ya estaban fuera (eso dejaba el "3434" sobre el cadáver).
+   Los de otros zombis no se tocan. */
+function kill(z,b){for(let i=Dm.length-1;i>=0;i--){const d=Dm[i];if(d.z===z||Math.hypot(d.x-z.x,d.y-(z.y-12))<24)Dm.splice(i,1)}blood(z.x,z.y-10,b.vx,b.vy,26,1);stamp(z.x,z.y,rr(14,22),'#6e0c18');stamp(z.x,z.y,8,'#3e0610');
  if(!z.dm)z.dm={arm:0,leg:0,head:0};
  tryDismemberZombie(z,z.lastW||0,true);
  R2(sc,z.x-9,z.y-4,18,7,'#3f4a45');if(!z.dm.head)R2(sc,z.x+8,z.y-5,6,6,'#7f9a6a');R2(sc,z.x-9,z.y-4,18,2,'#2a322e');sDie();kills++;
@@ -1178,7 +1182,7 @@ const CHARS=[
 let charIdx=0;
 function loadChar(){try{if(typeof localStorage!=='undefined'){const s=localStorage.getItem('ultima_oleada_char');if(s!==null){const i=parseInt(s,10);if(i>=0&&i<CHARS.length)charIdx=i}}}catch(e){}}
 function saveChar(){try{if(typeof localStorage!=='undefined')localStorage.setItem('ultima_oleada_char',String(charIdx))}catch(e){}}
-function selectChar(i){charIdx=i;saveChar();renderCharSel()}
+function selectChar(i){if(i!==charIdx)sClick();charIdx=i;saveChar();renderCharSel()}
 function drawCharPreview(cv,o){const c=cv.getContext('2d');if(!c)return;c.imageSmoothingEnabled=false;c.clearRect(0,0,48,64);drawPersonFigure(c,24,58,1.8,{ph:0,dir:2},{...o,gun:0,prev:1,hit:false})}
 function renderCharSel(){const c=$('charSel');if(!c)return;c.innerHTML='';CHARS.forEach((o,i)=>{const d=document.createElement('div');d.className='char-opt'+(i===charIdx?' sel':'');const cv=document.createElement('canvas');cv.width=48;cv.height=64;d.appendChild(cv);drawCharPreview(cv,o);const nm=document.createElement('span');nm.textContent=o.n;d.appendChild(nm);d.onclick=()=>selectChar(i);c.appendChild(d)});syncContinueBtn()}
 /* ---------- RELOJ, CLIMA Y CICLO DÍA/NOCHE ---------- */
@@ -1372,7 +1376,7 @@ function punch(){if(P.cd>0||P.rl>0)return;P.cd=WP[4].rate;P.fl=.06;sPunch();
  for(const z of Z){if(z.dead)continue;
   const dx=z.x-P.x,dy=(z.y-12)-(P.y-12),d=Math.hypot(dx,dy);
   if(d<40+ZT[z.t].r){let da=Math.abs(Math.atan2(dy,dx)-aim);if(da>Math.PI)da=2*Math.PI-da;
-   if(da<Math.PI/3){z.hp-=WP[4].dmg;z.f=.1;z.lastW=4;sGrowlHurt();dmgNum(z.x,z.y-12,WP[4].dmg);z.kx+=Math.cos(aim)*120;z.ky+=Math.sin(aim)*120;
+   if(da<Math.PI/3){z.hp-=WP[4].dmg;z.f=.1;z.lastW=4;sGrowlHurt();dmgNum(z.x,z.y-12,WP[4].dmg,z);z.kx+=Math.cos(aim)*120;z.ky+=Math.sin(aim)*120;
     blood(z.x,z.y-12,Math.cos(aim)*60,Math.sin(aim)*60,6);sHit();
     if(z.hp<=0){z.dead=1;z.kb={vx:Math.cos(aim)*120,vy:Math.sin(aim)*120}}else tryDismemberZombie(z,4,false)}}}
  const tx=Math.floor(px/T),ty=Math.floor(py/T);
@@ -1420,7 +1424,7 @@ function upd(dt){pad();
   for(let k=0;k<4&&!dead;k++){b.x+=b.vx*dt/4;b.y+=b.vy*dt/4;
    if(sol(b.x,b.y)){dead=true;const tx=Math.floor(b.x/T),ty=Math.floor(b.y/T),tt=(M[ty]&&M[ty][tx]!==undefined)?M[ty][tx]:2;
     if(tt===9||tt===4||tt===10||tt===17||tt===18)hitTileDmg(tx,ty,2);else Pa.push({x:b.x,y:b.y,vx:rr(-30,30),vy:rr(-30,30),l:.15,c:'#d9b13b',s:2})}
-   else for(let j=Z.length-1;j>=0;j--){const z=Z[j];if(!z.dead&&b.hit.indexOf(z)<0&&Math.hypot(z.x-b.x,z.y-12-b.y)<ZT[z.t].r){z.hp-=b.dmg;z.f=.1;z.lastW=b.w;sGrowlHurt();dmgNum(z.x,z.y-12,b.dmg);const kb=z.t===2?.04:.1;z.kx=b.vx*kb;z.ky=b.vy*kb;blood(z.x,z.y-12,b.vx,b.vy,9);sHit();b.hit.push(z);if(z.hp<=0){z.dead=1;z.kb=b}else tryDismemberZombie(z,b.w,false);if(b.pierce>0)b.pierce--;else dead=true;break}}}
+   else for(let j=Z.length-1;j>=0;j--){const z=Z[j];if(!z.dead&&b.hit.indexOf(z)<0&&Math.hypot(z.x-b.x,z.y-12-b.y)<ZT[z.t].r){z.hp-=b.dmg;z.f=.1;z.lastW=b.w;sGrowlHurt();dmgNum(z.x,z.y-12,b.dmg,z);const kb=z.t===2?.04:.1;z.kx=b.vx*kb;z.ky=b.vy*kb;blood(z.x,z.y-12,b.vx,b.vy,9);sHit();b.hit.push(z);if(z.hp<=0){z.dead=1;z.kb=b}else tryDismemberZombie(z,b.w,false);if(b.pierce>0)b.pierce--;else dead=true;break}}}
   if(dead||b.l<=0)Bu.splice(i,1)}
  for(let i=Sp.length-1;i>=0;i--){const s=Sp[i];s.l-=dt;
   /* La bolita persigue ligeramente al jugador: si cambia de dirección tras
@@ -1435,7 +1439,7 @@ function upd(dt){pad();
   if(Math.random()<.3)Pa.push({x:o.x,y:o.y,vx:rr(-10,10),vy:rr(-30,-5),l:.25,c:'#e8742c',s:3,k:'f'});
   if(o.l<=0||sol(o.x,o.y)){burstOrange(o);Bo.splice(i,1);continue}
   if(!dashing&&!godMode&&!P.dead&&Math.hypot(P.x-o.x,P.y-12-o.y)<26){P.hp-=20*DIFF[diff].dmg*(P.arm?.75:1);P.hu=.2;sHurt();blood(P.x,P.y-12,0,0,6);if(Math.random()<.6)playerDroplets();burstOrange(o);Bo.splice(i,1);continue}
-  for(let j=Z.length-1;j>=0;j--){const zz=Z[j];if(!zz.dead&&zz.t!==5&&Math.hypot(zz.x-o.x,zz.y-12-o.y)<ZT[zz.t].r+10){zz.hp-=40;zz.f=.15;zz.lastW=1;sGrowlHurt();dmgNum(zz.x,zz.y-12,40);blood(zz.x,zz.y-12,o.vx,o.vy,6);if(zz.hp<=0){zz.dead=1;zz.kb={vx:o.vx*.2,vy:o.vy*.2}}burstOrange(o);Bo.splice(i,1);break}}}
+  for(let j=Z.length-1;j>=0;j--){const zz=Z[j];if(!zz.dead&&zz.t!==5&&Math.hypot(zz.x-o.x,zz.y-12-o.y)<ZT[zz.t].r+10){zz.hp-=40;zz.f=.15;zz.lastW=1;sGrowlHurt();dmgNum(zz.x,zz.y-12,40,zz);blood(zz.x,zz.y-12,o.vx,o.vy,6);if(zz.hp<=0){zz.dead=1;zz.kb={vx:o.vx*.2,vy:o.vy*.2}}burstOrange(o);Bo.splice(i,1);break}}}
  for(let i=Pk.length-1;i>=0;i--){const pk=Pk[i];if(Math.hypot(P.x-pk.x,P.y-pk.y)<18){
   if(pk.kind==='hp'&&P.hp>=100)continue;
   if(pk.kind==='hp'){P.hp=Math.min(100,P.hp+25);sRel();toast('+25 VIDA')}
@@ -1659,7 +1663,7 @@ function render(){
  _hudH('clock',!clockVisible);_hudT('clockT',fmtTime());
  const _ck=(gameMin>=360&&gameMin<1080)?'sun':'moon';if(_hudClock!==_ck){_hudClock=_ck;drawMiniIcon($('clockIco'),_ck)}
  const _wx=weather==='rain'?'rain':weather==='snow'?'snow':'sun';if(_hudWx!==_wx){_hudWx=_wx;drawMiniIcon($('wxIco'),_wx)}}
-function dmgNum(x,y,n){if(Dm.length>24)Dm.shift();Dm.push({x:x+rr(-4,4),y:y-6,n:Math.round(n),l:.8})}
+function dmgNum(x,y,n,z){if(Dm.length>24)Dm.shift();Dm.push({x:x+rr(-4,4),y:y-6,n:Math.round(n),l:.8,z:z})}
 let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();/* Fase F: render() solo cuando el mundo se ve. En menú, pausa, tienda y salida el overlay es opaco y el canvas queda tapado: dibujarlo cada frame (~3-4 ms) era trabajo perdido. En play, dying, dead, timepanel y wxwheel sí se ve. */if(P&&(st==='play'||st==='dying'||st==='dead'||st==='timepanel'||st==='wxwheel'))render();requestAnimationFrame(loop)}
 $('play').onclick=()=>{ac();newGame()};
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
