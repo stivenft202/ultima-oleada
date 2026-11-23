@@ -448,7 +448,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
   <button class="menu-btn" id="btnMenuOptions">OPCIONES</button>
   <button class="menu-btn" id="btnMenuHelp">AYUDA</button>
   <button class="menu-btn" id="btnMenuExit">SALIR DEL JUEGO</button></div></div></div>
- <div class="ov" id="dead" hidden><h1>HAS MUERTO</h1><div id="dres"></div><div id="recDead"></div><button class="b" id="again">REINTENTAR (R)</button><button class="menu-btn" id="btnDeadMenu">MENU PRINCIPAL</button></div>
+ <div class="ov" id="dead" hidden><h1>HAS MUERTO</h1><div id="dres"></div><div id="recDead"></div><button class="menu-btn" id="btnDeadMenu">MENU PRINCIPAL</button></div>
  <div class="ov" id="shop" hidden><div class="sh-wrap"><div class="sh-panel"><div id="shNoMoney" hidden>DINERO INSUFICIENTE</div><div class="sh-title"><h1>TIENDA</h1></div><small id="shInfo"><span id="shInfoT"></span><canvas id="shIco" width="16" height="16"></canvas><span id="shInfoM"></span></small><div id="shBought"><span class="shb-title">TUS COMPRAS</span> · <span id="shBoughtList"></span></div><div class="sh-scroll"><div id="shItems" class="shop-grid"></div><div class="sh-below"><div id="shArmor" class="shop-grid"></div><div id="shUpgTitle" class="sh-upg-title"></div><div id="shUpg" class="shop-grid"></div><div id="shMsg"></div></div></div><button class="b" id="nextWave">SIGUIENTE OLEADA →</button><div id="shGod" style="display:none">GOD MODE</div></div></div></div>
  <div class="ov" id="save" hidden><h1>OLEADA LIMPIA</h1><button class="b" id="btnSaveGame">GUARDAR PROGRESO</button><button class="b" id="btnNoSave">CONTINUAR SIN GUARDAR</button><button class="b" id="btnSaveExit">SALIR</button></div>
  <div class="ov" id="saveConfirm" hidden><h1>¿DESEAS SALIR DEL JUEGO?</h1><small>Perderás todo el progreso</small><button class="b" id="btnConfirmExit">SÍ, SALIR</button><button class="menu-btn" id="btnCancelExit">VOLVER</button></div>
@@ -822,7 +822,7 @@ const ZT=[{hp:60,sp:[30,46],dmg:12,r:9,m:10},{hp:35,sp:[95,120],dmg:22,r:8,m:20}
    rate=segundos entre disparos, spread=dispersión, pel=perdigones,
    rel=segundos de recarga, res=reserva inicial, price=precio en tienda,
    pierce=cuántos zombis extra perfora la bala (rifle). */
-const WP=[{n:'PISTOLA',dmg:34,mag:12,spd:560,rate:.28,spread:.05,pel:1,rel:1.1,res:48},{n:'ESCOPETA',dmg:22,mag:6,spd:520,rate:.7,spread:.16,pel:6,rel:1.4,res:12,price:150},{n:'SUBFUSIL',dmg:18,mag:30,spd:600,rate:.09,spread:.08,pel:1,rel:1.2,res:60,price:200},{n:'RIFLE',dmg:70,mag:8,spd:800,rate:.9,spread:.02,pel:1,rel:1.5,res:16,price:250,pierce:2},{n:'PUÑO',dmg:12,mag:0,spd:0,rate:.45,spread:0,pel:0,rel:0,res:0}];
+const WP=[{n:'PISTOLA',dmg:34,mag:12,spd:560,rate:.45,spread:.05,pel:1,rel:1.1,res:48},{n:'ESCOPETA',dmg:22,mag:6,spd:520,rate:.7,spread:.16,pel:6,rel:1.4,res:12,price:150},{n:'SUBFUSIL',dmg:18,mag:30,spd:600,rate:.09,spread:.08,pel:1,rel:1.2,res:60,price:200},{n:'RIFLE',dmg:70,mag:8,spd:800,rate:.9,spread:.02,pel:1,rel:1.5,res:16,price:250,pierce:2},{n:'PUÑO',dmg:12,mag:0,spd:0,rate:.45,spread:0,pel:0,rel:0,res:0}];
 const WICON=['pistol','esc','smg','rif','fist'];
 /* Mejoras de armas (3 niveles cada una). dmg:+25%/nivel, mag:+50%/nivel, rel:-20%/nivel. */
 const UPG=[{key:'dmg',n:'DAÑO',d:'+25% de daño por nivel',costs:[80,150,250]},{key:'mag',n:'CARGADOR',d:'+50% de balas por nivel',costs:[60,120,200]},{key:'rel',n:'RECARGA',d:'-20% de tiempo por nivel',costs:[60,120,200]}];
@@ -1347,7 +1347,7 @@ $('musicBtn').onclick=()=>setMusic(!musicOn);
 $('diffEasy').onclick=()=>setDiff('FACIL');
 $('diffNormal').onclick=()=>setDiff('NORMAL');
 $('diffHard').onclick=()=>setDiff('DIFICIL');
-addEventListener('keydown',e=>{setMenuMusic();if(capturing){handleCaptureKey(e);return}dev='kb';if(discardOpen&&e.code==='Escape'){e.preventDefault();closeDiscard();return}if(e.code==='F11'||e.code==='F12'){if(!godMode)return;e.preventDefault();if(e.repeat)return;if(e.code==='F11'){if(timePanelOpen)closeTimePanel(false);else if(wxWheelOpen)closeWxWheel();else openTimePanel()}else{if(wxWheelOpen)closeWxWheel();else if(timePanelOpen)closeTimePanel(false);else openWxWheel()}return}if(timePanelOpen||wxWheelOpen){if(e.code==='Escape'){e.preventDefault();if(timePanelOpen)closeTimePanel(false);else closeWxWheel()}return}if(km[e.code]){K[km[e.code]]=1;e.preventDefault()}if(e.code===BIND.reload){st==='dead'?newGame():reload()}
+addEventListener('keydown',e=>{setMenuMusic();if(capturing){handleCaptureKey(e);return}dev='kb';if(discardOpen&&e.code==='Escape'){e.preventDefault();closeDiscard();return}if(e.code==='F11'||e.code==='F12'){if(!godMode)return;e.preventDefault();if(e.repeat)return;if(e.code==='F11'){if(timePanelOpen)closeTimePanel(false);else if(wxWheelOpen)closeWxWheel();else openTimePanel()}else{if(wxWheelOpen)closeWxWheel();else if(timePanelOpen)closeTimePanel(false);else openWxWheel()}return}if(timePanelOpen||wxWheelOpen){if(e.code==='Escape'){e.preventDefault();if(timePanelOpen)closeTimePanel(false);else closeWxWheel()}return}if(km[e.code]){K[km[e.code]]=1;e.preventDefault()}if(e.code===BIND.reload&&st!=='dead')reload()
  if(e.code===BIND.god&&!e.repeat)toggleGodMode();if(e.code==='End'&&godMode&&st==='play')finishWave();
  if(e.code===BIND.clock&&!e.repeat){e.preventDefault();setClockVisible(!clockVisible)}
  if(godMode&&(st==='play'||st==='shop')&&!e.repeat){if(e.code===BIND.moneyUp){e.preventDefault();money+=100;toast('+$100')}else if(e.code===BIND.moneyDown){e.preventDefault();money=Math.max(0,money-100);toast('-$100')}}
@@ -1661,7 +1661,7 @@ function render(){
  const _wx=weather==='rain'?'rain':weather==='snow'?'snow':'sun';if(_hudWx!==_wx){_hudWx=_wx;drawMiniIcon($('wxIco'),_wx)}}
 function dmgNum(x,y,n){if(Dm.length>24)Dm.shift();Dm.push({x:x+rr(-4,4),y:y-6,n:Math.round(n),l:.8})}
 let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();/* Fase F: render() solo cuando el mundo se ve. En menú, pausa, tienda y salida el overlay es opaco y el canvas queda tapado: dibujarlo cada frame (~3-4 ms) era trabajo perdido. En play, dying, dead, timepanel y wxwheel sí se ve. */if(P&&(st==='play'||st==='dying'||st==='dead'||st==='timepanel'||st==='wxwheel'))render();requestAnimationFrame(loop)}
-$('play').onclick=()=>{ac();newGame()};$('again').onclick=newGame;
+$('play').onclick=()=>{ac();newGame()};
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
 $('clockBtn').onclick=()=>setClockVisible(!clockVisible);
 $('wxSun').onclick=()=>{setWeather('sunny');closeWxWheel()};
