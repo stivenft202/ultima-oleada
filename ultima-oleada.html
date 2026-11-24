@@ -133,18 +133,21 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
 .menu-layout{display:flex;align-items:center;justify-content:center;gap:3cqw;width:100%;max-width:90cqw}
 .menu-left{display:flex;flex-direction:column;align-items:center;gap:1.2cqw;min-width:0}
 .menu-right{display:flex;flex-direction:column;gap:.9cqw;align-items:stretch;padding-left:3cqw;border-left:.15cqw solid #8a6a3a66}
-#menu .b,#menu .menu-btn{width:30cqw;margin:0;white-space:nowrap;background:linear-gradient(180deg,#fdf6e0 0%,#f2e3c0 45%,#d9c08a 100%);color:#3a2a1a;border:.25cqw solid #8a6a3a;border-radius:1cqw;text-shadow:none;box-shadow:inset 0 .25cqw 0 #ffffff88,inset 0 -.25cqw 0 #8a6a3a55,0 .4cqw #00000055}
-#menu .b:hover,#menu .menu-btn:hover{filter:brightness(1.06)}
-#menu .b:active,#menu .menu-btn:active{filter:brightness(.92)}
+#menu .b,#menu .menu-btn,#biome .b,#biome .menu-btn{width:30cqw;margin:0;white-space:nowrap;background:linear-gradient(180deg,#fdf6e0 0%,#f2e3c0 45%,#d9c08a 100%);color:#3a2a1a;border:.25cqw solid #8a6a3a;border-radius:1cqw;text-shadow:none;box-shadow:inset 0 .25cqw 0 #ffffff88,inset 0 -.25cqw 0 #8a6a3a55,0 .4cqw #00000055}
+#menu .b:hover,#menu .menu-btn:hover,#biome .b:hover,#biome .menu-btn:hover{filter:brightness(1.06)}
+#menu .b:active,#menu .menu-btn:active,#biome .b:active,#biome .menu-btn:active{filter:brightness(.92)}
 #menu .char-opt{background:linear-gradient(180deg,#fdf6e0,#e8d5a8);border:.2cqw solid #8a6a3a;color:#3a2a1a;text-shadow:none;box-shadow:inset 0 .2cqw 0 #ffffff88,0 .3cqw #00000044}
 #menu .char-opt:hover{border-color:#c89828}
 #menu .char-opt.sel{border-color:#c89828;box-shadow:0 0 0 .2cqw #c89828,0 0 1cqw #c8982888}
 #menu .char-opt span{align-self:stretch;background:#3a2a1a;color:#f2e3c0;text-align:center;padding:.3cqw 0;margin:.2cqw -.6cqw -.6cqw}
 /* ---------- PALETA UNIFICADA PERGAMINO / MADERA / DORADO (v2026-11-21d) ---------- */
 /* Todos los paneles con la misma paleta cálida: pergamino crema, café oscuro, madera oscura y dorado. Nada de negro puro ni rojo brillante. */
-#controls.ov,#options.ov,#help.ov,#exit.ov,#timePanel.ov{background:radial-gradient(ellipse at 18% 12%,#00000012 0 7%,transparent 8%),radial-gradient(ellipse at 82% 88%,#8a6a3a26 0 9%,transparent 10%),repeating-linear-gradient(0deg,#8a6a3a0d 0 .15cqw,transparent .15cqw .7cqw),linear-gradient(180deg,#f7ead0 0%,#efe0bd 45%,#dcc493 100%);color:#3a2a1a;text-shadow:none}
-#controls h1,#options h1,#help h1,#exit h1,#timePanel h1{color:#4a2f14;text-shadow:.15cqw .15cqw 0 #fff8e088,0 .3cqw 0 #8a6a3a55}
-#controls small,#options small,#help small,#exit small,#timePanel small{color:#5a3a1a}
+#controls.ov,#options.ov,#help.ov,#exit.ov,#timePanel.ov,#biome.ov{background:radial-gradient(ellipse at 18% 12%,#00000012 0 7%,transparent 8%),radial-gradient(ellipse at 82% 88%,#8a6a3a26 0 9%,transparent 10%),repeating-linear-gradient(0deg,#8a6a3a0d 0 .15cqw,transparent .15cqw .7cqw),linear-gradient(180deg,#f7ead0 0%,#efe0bd 45%,#dcc493 100%);color:#3a2a1a;text-shadow:none}
+#controls h1,#options h1,#help h1,#exit h1,#timePanel h1,#biome h1{color:#4a2f14;text-shadow:.15cqw .15cqw 0 #fff8e088,0 .3cqw 0 #8a6a3a55}
+#controls small,#options small,#help small,#exit small,#timePanel small,#biome small{color:#5a3a1a}
+/* ---------- PANTALLA DE BIOMA (v2026-11-23e) ---------- */
+/* Solo botones de texto, sin imágenes ni vista previa del mapa. */
+.biome-list{display:flex;flex-direction:column;gap:.7cqw;align-items:stretch}
 #timeDisplay{color:#4a2f14;text-shadow:.15cqw .15cqw 0 #fff8e088}
 #pause.ov{background:repeating-linear-gradient(90deg,transparent 0 8cqw,#00000022 8cqw 8.3cqw),repeating-linear-gradient(0deg,#00000022 0 .2cqw,transparent .2cqw 4cqw),linear-gradient(180deg,#4a3016f2,#241505f5);box-shadow:inset 0 0 0 .3cqw #ffd166,inset 0 0 0 .45cqw #1a0d05}
 /* La barra de ranuras NO se ve en la pausa ni en los submenús que se abren
@@ -158,7 +161,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
    (#menu) y la pantalla de salida (#exit) tienen la misma causa: al volver
    desde la pausa render() tampoco corre en esos estados y la barra quedaba
    visible encima; van en la misma lista. */
-#wrap:has(#pause:not([hidden]),#controls:not([hidden]),#options:not([hidden]),#help:not([hidden]),#menu:not([hidden]),#exit:not([hidden])) #hotbar{display:none}
+#wrap:has(#pause:not([hidden]),#controls:not([hidden]),#options:not([hidden]),#help:not([hidden]),#menu:not([hidden]),#exit:not([hidden]),#biome:not([hidden])) #hotbar{display:none}
 #pause h1,#dead h1,#wxWheel h1{color:#ffd166;text-shadow:.3cqw .3cqw 0 #1a0d05,0 0 1.2cqw #ffd16655}
 #wxWheel.ov{background:repeating-linear-gradient(90deg,transparent 0 8cqw,#00000022 8cqw 8.3cqw),linear-gradient(180deg,#4a3016f2,#241505f5);box-shadow:inset 0 0 0 .3cqw #ffd166,inset 0 0 0 .45cqw #1a0d05}
 #dead{box-shadow:inset 0 0 0 .3cqw #ffd166,inset 0 0 0 .45cqw #1a0d05}
@@ -448,6 +451,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:crisp-edges;image-re
   <button class="menu-btn" id="btnMenuOptions">OPCIONES</button>
   <button class="menu-btn" id="btnMenuHelp">AYUDA</button>
   <button class="menu-btn" id="btnMenuExit">SALIR DEL JUEGO</button></div></div></div>
+ <div class="ov" id="biome" hidden><h1>ELIGE DÓNDE EMPEZAR</h1><small>Elige el bioma donde aparecerá tu personaje</small><div class="biome-list"><button class="b" id="biomePlaya">PLAYA SUR</button><button class="b" id="biomeCiudad">CIUDAD EN RUINAS</button><button class="b" id="biomeJungla">JUNGLA</button><button class="b" id="biomeBosque">BOSQUE FRONDOSO</button></div><button class="menu-btn" id="biomeBack">VOLVER</button></div>
  <div class="ov" id="dead" hidden><h1>HAS MUERTO</h1><div id="dres"></div><div id="recDead"></div><button class="menu-btn" id="btnDeadMenu">MENU PRINCIPAL</button></div>
  <div class="ov" id="shop" hidden><div class="sh-wrap"><div class="sh-panel"><div id="shNoMoney" hidden>DINERO INSUFICIENTE</div><div class="sh-title"><h1>TIENDA</h1></div><small id="shInfo"><span id="shInfoT"></span><canvas id="shIco" width="16" height="16"></canvas><span id="shInfoM"></span></small><div id="shBought"><span class="shb-title">TUS COMPRAS</span> · <span id="shBoughtList"></span></div><div class="sh-scroll"><div id="shItems" class="shop-grid"></div><div class="sh-below"><div id="shArmor" class="shop-grid"></div><div id="shUpgTitle" class="sh-upg-title"></div><div id="shUpg" class="shop-grid"></div><div id="shMsg"></div></div></div><button class="b" id="nextWave">SIGUIENTE OLEADA →</button><div id="shGod" style="display:none">GOD MODE</div></div></div></div>
  <div class="ov" id="save" hidden><h1>OLEADA LIMPIA</h1><button class="b" id="btnSaveGame">GUARDAR PROGRESO</button><button class="b" id="btnNoSave">CONTINUAR SIN GUARDAR</button><button class="b" id="btnSaveExit">SALIR</button></div>
@@ -479,7 +483,12 @@ const hs=(x,y,s)=>{let h=(x*374761393+y*668265263+s*982451653)>>>0;h=((h^(h>>>13
    34 semáforo, 35 contenedor, 36 edificio en ruinas (ciudad),
    37 río (agua), 38 puente, 39 cascada (agua), 40 agua de pantano
    (morada), 41 suelo de pantano, 42 árbol de pantano, 43 lago y arroyo
-   (agua). El 24 NO se usa (la Ronda 19 lo prohíbe: ese tile fue eliminado).
+   (agua), 44 hormigón/acera (suelo de la ciudad, caminable),
+   45 valla de madera, 46 valla de metal, 47 valla de ladrillo,
+   48 caminito de piedra, 49 baldosa de plaza, 50 baldosa agrietada,
+   51 farola, 52 banca, 53 jardinera, 54 alcantarilla, 55 charco,
+   56 coche quemado, 57 coche volcado. El 24 NO se usa (la Ronda 19
+   lo prohíbe: ese tile fue eliminado) y el 8 tampoco se usa.
    Los tiles 37/39/40/43 (agua) NO son caminables: solo se cruzan por los
    puentes (38) o rodeándolos; el flood fill garantiza que nada quede
    aislado por el agua.
@@ -502,7 +511,164 @@ let islandCX=1344,islandCY=1024,coastRx=1152,coastRy=832,coastW=[[2,.05,0],[3,.0
 function islandR(a){const c=Math.cos(a),s=Math.sin(a);let r=1/Math.sqrt((c*c)/(coastRx*coastRx)+(s*s)/(coastRy*coastRy));for(const w of coastW)r*=1+w[1]*Math.sin(w[0]*a+w[2]);return r}
 function coastPath(c,off){const N=96;c.beginPath();for(let i=0;i<=N;i++){const a=i/N*6.283185307,r=islandR(a)+off,x=islandCX+Math.cos(a)*r,y=islandCY+Math.sin(a)*r;if(i===0)c.moveTo(x,y);else c.lineTo(x,y)}c.closePath()}
 let CRATES=[],METAL_CRATES=[],CARDBOARD_CRATES=[],MILITARY_CRATES=[];
-const WALK_T=[0,1,6,7,11,12,13,16,20,32,38,41];
+const WALK_T=[0,1,6,7,11,12,13,16,20,32,38,41,44,48,49,50,54,55];
+/* --- TILES NUEVOS DE LA CIUDAD (v2026-11-23e) --- */
+/* 45 valla de madera, 46 valla de metal, 47 valla de ladrillo (sólidas);
+   48 caminito de piedra, 49 baldosa de plaza, 50 baldosa agrietada
+   (caminables); 51 farola, 52 banca, 53 jardinera (sólidos);
+   54 alcantarilla y 55 charco (caminables); 56 coche quemado y 57 coche
+   volcado (sólidos, en la calle). El 24 sigue PROHIBIDO y el 8 también. */
+const FENCE_T=[45,46,47],PATH_T=[48,49,50];
+/* hsU(x,y,s): como hs() pero con los bits ALTOS del hash. Los 10 bits
+   bajos de hs() están sesgados sobre la rejilla de la ciudad (se
+   acumulan en 0, .2, .5 y .7, medido en 21.901 tiles); los repartos
+   70/15/15 de baldosas y vallas usan hsU para que salgan de verdad. */ 
+const hsU=(x,y,s)=>{let h=(x*374761393+y*668265263+s*982451653)>>>0;h=((h^(h>>>13))*1274126177)>>>0;return((h>>>10)&1023)/1023};
+/* --- BIOMAS A NIVEL SUPERIOR (v2026-11-23e) --- */
+/* BIOMES, LAKE, BM y biomeAt vivían dentro de buildMap; ahora son de
+   nivel superior para que findBiomeSpawn (pantalla de bioma) pueda
+   buscar una baldosa dentro de cada bioma con cualquier semilla.
+   0 pradera, 1 desierto, 2 ciudad, 3 jungla, 4 bosque, 5 pantano. */
+const BIOMES=[{id:1,cx:150,cy:130,r:110},{id:2,cx:320,cy:110,r:120},{id:3,cx:130,cy:320,r:110},{id:4,cx:320,cy:320,r:115},{id:5,cx:480,cy:250,r:100}];
+const LAKE={cx:450,cy:400,rx:45,ry:30};
+let BM=null;
+const biomeAt=(x,y)=>{let best=0,bv=0;for(const b of BIOMES){const d=Math.hypot(x-b.cx,y-b.cy);const inf=Math.max(0,1-d/b.r)+(hs(x,y,777+b.id)-0.5)*0.35;if(inf>bv){bv=inf;best=b.id}}return bv>0.05?best:0};
+/* findBiomeSpawn(id): baldosa de aparición dentro de un bioma, para la
+   pantalla de selección de bioma (newGame(seed,biome) la usa).
+   'playa' devuelve el spawn actual; los demás, una baldosa BUSCADA
+   (no un punto fijo): caminable (WALK_T), sin bloqueo en las 4 esquinas
+   del jugador (como blk, sin usar P) y con un área 3x3 caminable
+   alrededor. 'lago' devuelve una baldosa caminable de orilla adyacente
+   a agua 43 (su 3x3 puede incluir agua: la orilla bordea el lago por
+   definición, así que se exigen >=6 tiles caminables en el 3x3 y el
+   resto agua 43). Si no encuentra nada, null (el que llama usa la
+   playa como respaldo). Determinista por semilla (sin rnd()). */
+function findBiomeSpawn(id){
+ if(id==='playa')return[spawnTX,spawnTY];
+ if(!BM||!M.length)return null;
+ const bid={desierto:1,ciudad:2,jungla:3,bosque:4,pantano:5}[id]||0;
+ const isLake=id==='lago';
+ if(!isLake&&!bid)return null;
+ const clear3=(tx,ty)=>{for(let j=ty-1;j<=ty+1;j++)for(let i=tx-1;i<=tx+1;i++){if(!M[j]||!WALK_T.includes(M[j][i]))return false}return true};
+ const clear3Lake=(tx,ty)=>{let w=0;for(let j=ty-1;j<=ty+1;j++)for(let i=tx-1;i<=tx+1;i++){const t=M[j]&&M[j][i];if(WALK_T.includes(t))w++;else if(t!==43)return false}return w>=6};
+ const unblocked=(tx,ty)=>{const cx=tx*T+16,cy=ty*T+16;return!sol(cx-6,cy-5)&&!sol(cx+6,cy-5)&&!sol(cx-6,cy+2)&&!sol(cx+6,cy+2)};
+ const ok=(tx,ty)=>{
+  if(tx<1||ty<1||tx>=MW-1||ty>=MH-1)return false;
+  if(!WALK_T.includes(M[ty][tx]))return false;
+  if(isLake){
+   if(tx<LAKE.cx-LAKE.rx-6||tx>LAKE.cx+LAKE.rx+6||ty<LAKE.cy-LAKE.ry-6||ty>LAKE.cy+LAKE.ry+6)return false;
+   let shore=false;for(const d of [[1,0],[-1,0],[0,1],[0,-1]])if(M[ty+d[1]]&&M[ty+d[1]][tx+d[0]]===43)shore=true;
+   if(!shore)return false;
+   return clear3Lake(tx,ty)&&unblocked(tx,ty);
+  }
+  if(BM[ty*MW+tx]!==bid)return false;
+  /* Dentro del bioma de verdad, no en una mota de ruido de BM lejos
+     del centro: a menos de un radio del centro del bioma. La ciudad,
+     además, dentro de la zona construida (x230-410, y50-170). */
+  const b=BIOMES[bid-1];
+  if(Math.hypot(tx-b.cx,ty-b.cy)>b.r)return false;
+  if(id==='ciudad'&&(tx<230||tx>410||ty<50||ty>170))return false;
+  return clear3(tx,ty)&&unblocked(tx,ty)};
+ const found=[];
+ for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++)if(ok(x,y))found.push([x,y]);
+ if(!found.length)return null;
+ return found[((mapSeed*2654435761)>>>0)%found.length];
+}
+/* buildingInfo(ax,ay): variante visual de un edificio desde su ancla
+   (esquina superior-izquierda): pisos 2-5, destruido, negocio, color,
+   techo y huella (ancho/alto en tiles). La usan paintObject(36) y las
+   pruebas, para que el dibujo y la medida digan lo mismo. */
+function buildingInfo(ax,ay){
+ let bw=0;while(M[ay]&&M[ay][ax+bw]===36)bw++;
+ let bh=0;while(M[ay+bh]&&M[ay+bh][ax]===36)bh++;
+ const fr=hs(ax,ay,73);
+ const floors=fr<0.12?2:fr<0.38?3:fr<0.7?4:5;
+ const ruined=hs(ax,ay,74)>0.62;
+ const shop=!ruined&&hs(ax,ay,75)>0.72;
+ return{bw,bh,floors,ruined,shop,
+  wall:['#8a8a82','#9a5a3a','#b08a4a','#5a6a7a','#6a7a5a','#a06a5a','#7a7a72'][(hs(ax,ay,71)*7)|0],
+  roof:['#5a5a55','#6a4a35','#4a4a48'][(hs(ax,ay,72)*3)|0],
+  roofKind:(hs(ax,ay,76)*3)|0,
+  signCol:['#c02828','#2a5a8a','#d9b13b','#2c6a3a','#7a3a8a'][(hs(ax,ay,77)*5)|0]};
+}
+/* --- CALLES Y SUELOS (v2026-11-23d) --- */
+/* Un tile es "calzada" si forma parte de la calle: asfalto, losa o
+   escombro sobre asfalto, coche o furgoneta. El semáforo (34) NO
+   cuenta: está sobre la acera, y si contara alargaría la racha de la
+   calle y la línea central daría un salto en esa columna. */
+const isRoadT=t=>t===11||t===12||t===14||t===15||t===16;
+/* Longitud de la racha de calzada que pasa por (tx,ty) en cada eje
+   (con tope de 40 por lado: basta para distinguir una calle larga
+   de su propio ancho, sin recorrer la calle entera). */
+function roadRun(tx,ty){
+ let h=1,v=1;
+ for(let k=1;k<=40&&isRoadT(M[ty][tx-k]);k++)h++;
+ for(let k=1;k<=40&&isRoadT(M[ty][tx+k]);k++)h++;
+ for(let k=1;k<=40&&M[ty-k]&&isRoadT(M[ty-k][tx]);k++)v++;
+ for(let k=1;k<=40&&M[ty+k]&&isRoadT(M[ty+k][tx]);k++)v++;
+ return[h,v];
+}
+/* Orientación de la calle que pasa por (tx,ty): 'H' si va de oriente
+   a occidente, 'V' si va de sur a norte, null si es un cruce (ambas
+   rachas largas) o si no hay calle. Una calle horizontal tiene una
+   racha horizontal larga y una vertical de solo 2-3 tiles (su ancho). */
+function streetOrient(tx,ty){
+ if(!M[ty]||!isRoadT(M[ty][tx]))return null;
+ const r=roadRun(tx,ty);
+ if(r[0]>r[1]+2)return 'H';
+ if(r[1]>r[0]+2)return 'V';
+ return null;
+}
+/* Suelo que corresponde a cada tile de objeto: el objeto se asienta
+   sobre el suelo DE SU BIOMA, nunca sobre hierba prestada. Devuelve
+   'grass' | 'sand' | 'swamp' | 'concrete' | 'asphalt' | 'dirt'. */
+function groundSoil(tx,ty){
+ const t=M[ty][tx];
+ if(t===33||t===13)return 'sand'; /* cactus y tierra del desierto */
+ if(t===42)return 'swamp'; /* árbol de pantano */
+ if(t===11)return 'asphalt'; /* asfalto */
+ if(t===44||t===34||t===35||t===36)return 'concrete'; /* ciudad */
+ if(t===45||t===46||t===47||t===51||t===52||t===53)return 'concrete'; /* vallas, farola, banca y jardinera: en la ciudad */
+ if(t===48)return 'path'; /* caminito de piedra */
+ if(t===49)return 'plaza'; /* baldosa de plaza */
+ if(t===50)return 'cracked'; /* baldosa agrietada */
+ if(t===54){ /* alcantarilla: asfalto si está en la calle, hormigón si está en la acera */
+  let rn=0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const n=M[ty+d[1]]&&M[ty+d[1]][tx+d[0]];if(isRoadT(n))rn++}
+  return rn>0?'asphalt':'concrete'}
+ if(t===55)return 'concrete'; /* charco sobre el hormigón */
+ if(t===56||t===57)return 'asphalt'; /* coches quemado/volcado, en la calle */
+ if(t===14||t===15)return 'asphalt'; /* coches y furgonetas, en la calle */
+ if(t===12||t===16){
+  /* Losa/escombro: hormigón si está rodeado de ciudad, asfalto si
+     está rodeado de calle, tierra en cualquier otro sitio. */
+  let rn=0,cn=0;
+  for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){
+   const n=M[ty+d[1]]&&M[ty+d[1]][tx+d[0]];
+   if(isRoadT(n))rn++;else if(n===44||n===35||n===36||n===48||n===49||n===50)cn++;
+  }
+  if(cn>rn)return 'concrete';
+  if(rn>0)return 'asphalt';
+  return 'dirt';
+ }
+ if(t===5){
+  /* Roca: arena si está rodeada de desierto, pantano si está rodeada
+     de pantano, hormigón si está en la ciudad, hierba en el resto
+     (las rocas de pradera y bosque). */
+  let s=0,w=0,c=0;
+  for(let j=ty-1;j<=ty+1;j++)for(let i=tx-1;i<=tx+1;i++){
+   if(i===tx&&j===ty)continue;
+   const n=M[j]&&M[j][i];
+   if(n===32||n===33||n===13)s++;
+   else if(n===41||n===42||n===40)w++;
+   else if(n===44||n===35||n===36||n===48||n===49||n===50)c++;
+  }
+  if(s>=2)return 'sand';
+  if(w>=2)return 'swamp';
+  if(c>=2)return 'concrete';
+  return 'grass';
+ }
+ return 'grass';
+}
 function nearSand(x,y){for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(M[j]&&M[j][i]===20)return true;return false}
 /* ¿El tile está pegado a una ruina (muro, columna o estatua)? Las cajas,
    barriles y rocas NO van ahí: taponarían la puerta de una ruina y su
@@ -546,10 +712,7 @@ function buildMap(seed){
  /* 0 pradera (fondo), 1 desierto, 2 ciudad, 3 jungla, 4 bosque,
     5 pantano. El lago y el río son agua, no un bioma de suelo.
     Centros elegidos para ~60 s caminando entre centros adyacentes. */
- const BM=new Uint8Array(MW*MH);
- const BIOMES=[{id:1,cx:150,cy:130,r:110},{id:2,cx:320,cy:110,r:120},{id:3,cx:130,cy:320,r:110},{id:4,cx:320,cy:320,r:115},{id:5,cx:480,cy:250,r:100}];
- const LAKE={cx:450,cy:400,rx:45,ry:30};
- const biomeAt=(x,y)=>{let best=0,bv=0;for(const b of BIOMES){const d=Math.hypot(x-b.cx,y-b.cy);const inf=Math.max(0,1-d/b.r)+(hs(x,y,777+b.id)-0.5)*0.35;if(inf>bv){bv=inf;best=b.id}}return bv>0.05?best:0};
+ BM=new Uint8Array(MW*MH); /* BIOMES, LAKE y biomeAt son de nivel superior (v2026-11-23e): los usa findBiomeSpawn. */
  for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++)if(M[y][x]===0)BM[y*MW+x]=biomeAt(x,y);
  /* Suelo por bioma: desierto = arena de desierto, pantano = suelo de
     pantano; ciudad, jungla, bosque y pradera quedan en hierba (la ciudad
@@ -616,11 +779,27 @@ function buildMap(seed){
    const d=Math.hypot(i-px,j-py);
    if(d<pr+(hs(i,j,892)-0.5)*1.5&&M[j][i]===41)M[j][i]=40}
   pools++}
- /* --- CIUDAD EN RUINAS (arriba): calles de asfalto en rejilla --- */
+ /* --- CIUDAD EN RUINAS (arriba): red IRREGULAR de calles --- */
+ /* Nada de rejilla regular: una avenida principal este-oeste, calles
+    laterales con espaciamiento variable, algunas que terminan en fondo
+    de saco o doblan, y anchos de 2-3 baldosas. Las calles se definen
+    como rectángulos (x0,y0,x1,y1) y se pintan como asfalto (11). */
  const cityX0=230,cityX1=410,cityY0=50,cityY1=170;
- const streetYs=[65,95,125,155],streetXs=[260,310,360,410];
- for(const sy of streetYs)for(let x=cityX0;x<=cityX1;x++)for(let k=0;k<2;k++){const yy=sy+k;if(M[yy]&&M[yy][x]!==19&&M[yy][x]!==37&&M[yy][x]!==43)M[yy][x]=11}
- for(const sx of streetXs)for(let y=cityY0;y<=cityY1;y++)for(let k=0;k<2;k++){const xx=sx+k;if(M[y]&&M[y][xx]!==19&&M[y][xx]!==37&&M[y][xx]!==43)M[y][xx]=11}
+ const streets=[
+  {x0:232,y0:98,x1:408,y1:100}, /* avenida principal este-oeste (3) */
+  {x0:238,y0:58,x1:402,y1:59}, /* calle norte (2) */
+  {x0:245,y0:128,x1:375,y1:129}, /* calle media-sur (2), termina al este */
+  {x0:238,y0:152,x1:395,y1:153}, /* calle sur (2) */
+  {x0:260,y0:168,x1:360,y1:169}, /* calle del fondo sur (2), parcial */
+  {x0:248,y0:55,x1:249,y1:170}, /* vertical oeste (2), cruza todo */
+  {x0:285,y0:58,x1:286,y1:140}, /* vertical (2), fondo de saco al sur */
+  {x0:318,y0:55,x1:320,y1:168}, /* avenida norte-sur (3), cruza todo */
+  {x0:355,y0:98,x1:356,y1:170}, /* vertical (2), nace en la avenida */
+  {x0:390,y0:55,x1:391,y1:140}, /* vertical este (2), fondo de saco */
+  {x0:268,y0:128,x1:269,y1:153}, /* conector corto media-sur → sur (2) */
+  {x0:335,y0:70,x1:336,y1:98} /* callejón (2) que baja a la avenida */
+ ];
+ for(const s of streets)for(let y=s.y0;y<=s.y1;y++)for(let x=s.x0;x<=s.x1;x++){if(M[y]&&M[y][x]!==19&&M[y][x]!==37&&M[y][x]!==43)M[y][x]=11}
  /* --- SENDEROS curvos de tierra (desde el spawn hacia los biomas) --- */
  /* walkFrom: camina de (x0,y0) a (tx,ty) con quiebros; convierte hierba,
     arena de desierto y suelo de pantano en sendero (1); NO toca asfalto,
@@ -635,45 +814,199 @@ function buildMap(seed){
  walkFrom(130,320,320,320); /* jungla→bosque */
  /* Spawn despejado (11x11): se conserva la arena (20) y el mar (19). */
  for(let j=spawnTY-5;j<=spawnTY+5;j++)for(let i=spawnTX-5;i<=spawnTX+5;i++)if(M[j]&&M[j][i]!==undefined&&M[j][i]!==19&&M[j][i]!==20)M[j][i]=0;
- /* --- EDIFICIOS EN RUINAS (36) en las manzanas de la ciudad --- */
- /* Edificio MACIZO (como las ruinas de piedra): todo el rectángulo es
-    muro, sin interior transitable (una ruina hueca ATRAPABA a los
-    zombis: la IA no encontraba la salida). */
- const placeBuilding=(x,y,w,h)=>{let ok=true;for(let j=y;j<y+h&&ok;j++)for(let i=x;i<x+w&&ok;i++)if(!M[j]||M[j][i]!==0)ok=false;if(!ok)return false;
-  for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)M[j][i]=36;return true};
- let bplaced=0,bguard=0;
- while(bplaced<14&&bguard++<400){
-  const w=3+(rnd()*4|0),h=3+(rnd()*3|0);
-  const x=cityX0+3+(rnd()*(cityX1-cityX0-6-w)|0),y=cityY0+3+(rnd()*(cityY1-cityY0-6-h)|0);
-  if(placeBuilding(x,y,w,h))bplaced++}
- /* --- VEHÍCULOS (14 coche, 15 furgoneta) sueltos en las calles --- */
- /* Nunca forman recintos: van sobre el asfalto, 1 por carril, y el
-    carril vecino queda libre (la calle tiene 2 tiles de ancho). */
- const nearVeh=(x,y)=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(M[j]&&M[j][i]!==undefined&&(M[j][i]===14||M[j][i]===15))return true;return false};
+ /* --- LOTES BALDÍOS (maleza): se eligen ANTES de construir, para
+    que el relleno de manzanas los respete (antes se elegían después y
+    con las manzanas llenas ya no quedaba sitio para ellos). --- */
+ const weedLots=[];
+ let wl=0,wlg=0;
+ while(wl<4&&wlg++<200){
+  const lw=3+(rnd()*3|0),lh=3+(rnd()*2|0);
+  const lx=cityX0+3+(rnd()*(cityX1-cityX0-6-lw)|0),ly=cityY0+3+(rnd()*(cityY1-cityY0-6-lh)|0);
+  let ok=true;
+  for(let j=ly;j<ly+lh&&ok;j++)for(let i=lx;i<lx+lw&&ok;i++)if(!M[j]||M[j][i]!==0)ok=false;
+  if(!ok)continue;
+  weedLots.push([lx,ly,lw,lh]);wl++;
+ }
+ const inWeedLot=(x,y)=>{for(const l of weedLots)if(x>=l[0]&&x<l[0]+l[2]&&y>=l[1]&&y<l[1]+l[3])return true;return false};
+ /* --- PLAZAS (2): rectángulos despejados dentro de las manzanas, que
+    luego se pavimentan con baldosas de plaza (49) y se amueblan con
+    bancas, jardineras y farolas. --- */
+ const plazaRects=[];
+ let plg=0;
+ while(plazaRects.length<2&&plg++<200){
+  const pw=7+(rnd()*4|0),ph=5+(rnd()*3|0);
+  const px=cityX0+3+(rnd()*(cityX1-cityX0-6-pw)|0),py=cityY0+3+(rnd()*(cityY1-cityY0-6-ph)|0);
+  let ok=true;
+  for(let j=py;j<py+ph&&ok;j++)for(let i=px;i<px+pw&&ok;i++)if(!M[j]||M[j][i]!==0)ok=false;
+  if(!ok)continue;
+  if(inWeedLot(px,py)||inWeedLot(px+pw-1,py+ph-1)||inWeedLot(px+pw-1,py)||inWeedLot(px,py+ph-1))continue;
+  let ov=false;
+  for(const q of plazaRects)if(px<q[0]+q[2]&&px+pw>q[0]&&py<q[1]+q[3]&&py+ph>q[1])ov=true;
+  if(ov)continue;
+  plazaRects.push([px,py,pw,ph]);
+ }
+ const inPlaza=(x,y)=>{for(const q of plazaRects)if(x>=q[0]&&x<q[0]+q[2]&&y>=q[1]&&y<q[1]+q[3])return true;return false};
+ /* --- EDIFICIOS EN RUINAS (36): manzanas llenas por bloques --- */
+ /* Cada manzana (entre calles) se rellena con edificios de 3x2 a 7x5,
+    en filas con 1-2 tiles de separación entre edificios y 2 entre
+    filas: los huecos forman callejones peatonales que conectan con
+    las calles. Un 15% de celdas se deja libre (patios) y los lotes
+    baldíos y las plazas no se construyen. Así las manzanas son
+    mayormente edificios y la ciudad deja de ser una plancha vacía.
+    rectFree acepta también sendero (1): un edificio puede cubrir el
+    sendero que pasaba por ahí; el sendero sigue llegando a la calle. */
+ const xBands=[[232,247],[250,284],[287,317],[321,354],[357,389],[392,408]];
+ const yBands=[[52,57],[60,97],[101,127],[130,151],[154,167]];
+ const rectFree=(x,y,w,h)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){if(!M[j]||(M[j][i]!==0&&M[j][i]!==1))return false;if(inWeedLot(i,j)||inPlaza(i,j))return false}return true};
+ let bplaced=0;
+ for(const yb of yBands)for(const xb of xBands){
+  const bx0=xb[0],bx1=xb[1],by0=yb[0],by1=yb[1];
+  if(bx1-bx0+1<4||by1-by0+1<3)continue;
+  let y=by0;
+  while(y<=by1){
+   let rowH=0,x=bx0;
+   while(x<=bx1){
+    const w=3+((rnd()*5)|0),h=2+((rnd()*4)|0);
+    const ww=Math.min(w,bx1-x+1),hh=Math.min(h,by1-y+1);
+    if(ww>=2&&hh>=2&&rnd()>0.15&&rectFree(x,y,ww,hh)){
+     for(let j=y;j<y+hh;j++)for(let i=x;i<x+ww;i++)M[j][i]=36;
+     bplaced++;
+     if(hh>rowH)rowH=hh;
+    }
+    x+=ww+1+((rnd()*2)|0); /* 1-2 tiles de callejón entre edificios */
+   }
+   y+=Math.max(rowH,2)+2; /* 2 tiles de callejón entre filas */
+  }
+ }
+ /* --- SUELO DE LA CIUDAD: hormigón (44), no hierba --- */
+ /* Todo lo que queda en hierba dentro de la ciudad (entre edificios
+    y calles) es acera de hormigón, salvo unos lotes baldíos con
+    maleza que se dejan en hierba para que la ciudad no sea una
+    plancha gris sin vida (ahí pueden salir árboles y arbustos). */
+ for(let y=cityY0;y<=cityY1;y++)for(let x=cityX0;x<=cityX1;x++){
+  if(M[y]&&M[y][x]===0&&!inWeedLot(x,y))M[y][x]=44;
+ }
+ /* --- VEHÍCULOS (14 coche, 15 furgoneta, 56 quemado, 57 volcado) --- */
+ /* Nunca forman recintos: van sobre el asfalto de las calles
+    HORIZONTALES (el coche se dibuja en horizontal), 1 por carril, y
+    el carril vecino queda libre (la calle tiene 2-3 tiles de ancho). */
+ const nearVeh=(x,y)=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(M[j]&&M[j][i]!==undefined&&(M[j][i]===14||M[j][i]===15||M[j][i]===56||M[j][i]===57))return true;return false};
  let cars=0,cg=0;
- while(cars<16&&cg++<600){
-  const sy=streetYs[(rnd()*streetYs.length)|0]+(rnd()<0.5?0:1);
-  const x=cityX0+2+(rnd()*(cityX1-cityX0-4)|0);
-  if(M[sy]&&M[sy][x]===11&&!nearVeh(x,sy)){M[sy][x]=14;cars++}}
+ while(cars<26&&cg++<1200){
+  const x=cityX0+2+(rnd()*(cityX1-cityX0-4)|0),y=cityY0+2+(rnd()*(cityY1-cityY0-4)|0);
+  if(M[y]&&M[y][x]===11&&streetOrient(x,y)==='H'&&!nearVeh(x,y)){M[y][x]=14;cars++}}
  let vans=0,vg=0;
- while(vans<6&&vg++<400){
-  const sy=streetYs[(rnd()*streetYs.length)|0]+(rnd()<0.5?0:1);
-  const x=cityX0+2+(rnd()*(cityX1-cityX0-6)|0);
-  if(M[sy]&&M[sy][x]===11&&M[sy][x+1]===11&&!nearVeh(x,sy)&&!nearVeh(x+1,sy)){M[sy][x]=15;M[sy][x+1]=15;vans++}}
- /* Semáforos (34) en esquinas de calles (1 por cruce, deja 3 tiles libres). */
+ while(vans<10&&vg++<900){
+  const x=cityX0+2+(rnd()*(cityX1-cityX0-5)|0),y=cityY0+2+(rnd()*(cityY1-cityY0-4)|0);
+  if(M[y]&&M[y][x]===11&&M[y][x+1]===11&&streetOrient(x,y)==='H'&&streetOrient(x+1,y)==='H'&&!nearVeh(x,y)&&!nearVeh(x+1,y)){M[y][x]=15;M[y][x+1]=15;vans++}}
+ let burnt=0,bg=0;
+ while(burnt<6&&bg++<600){
+  const x=cityX0+2+(rnd()*(cityX1-cityX0-4)|0),y=cityY0+2+(rnd()*(cityY1-cityY0-4)|0);
+  if(M[y]&&M[y][x]===11&&streetOrient(x,y)==='H'&&!nearVeh(x,y)){M[y][x]=56;burnt++}}
+ let over=0,og=0;
+ while(over<4&&og++<600){
+  const x=cityX0+2+(rnd()*(cityX1-cityX0-4)|0),y=cityY0+2+(rnd()*(cityY1-cityY0-4)|0);
+  if(M[y]&&M[y][x]===11&&streetOrient(x,y)==='H'&&!nearVeh(x,y)){M[y][x]=57;over++}}
+ /* Semáforos (34) en las esquinas de los cruces: sobre la acera (44),
+    no sobre el asfalto (antes ocupaban un tile de calle y la
+    estrechaban a la mitad). 1 por cruce. */
+ const crossings=[];
+ for(const a of streets)for(const b of streets){
+  if(a.y1-a.y0<a.x1-a.x0&&b.x1-b.x0<b.y1-b.y0){ /* a horizontal, b vertical */
+   const cx0=Math.max(a.x0,b.x0),cx1=Math.min(a.x1,b.x1),cy0=Math.max(a.y0,b.y0),cy1=Math.min(a.y1,b.y1);
+   if(cx0<=cx1&&cy0<=cy1)crossings.push([cx0,cy0,cx1,cy1]);
+  }
+ }
  let tls=0,tg=0;
- while(tls<6&&tg++<200){
-  const sy=streetYs[(rnd()*streetYs.length)|0],sx=streetXs[(rnd()*streetXs.length)|0];
-  const x=sx+(rnd()<0.5?0:1),y=sy+(rnd()<0.5?0:1);
-  if(M[y]&&M[y][x]===11){M[y][x]=34;tls++}}
- /* Contenedores (35) sueltos en la ciudad (no en las calles). */
+ while(tls<6&&tg++<300&&crossings.length){
+  const c=crossings[(rnd()*crossings.length)|0];
+  const corners=[[c[0]-1,c[1]-1],[c[2]+1,c[1]-1],[c[0]-1,c[2]+1],[c[2]+1,c[2]+1]];
+  const cn=corners[(rnd()*4)|0],x=cn[0],y=cn[1];
+  if(M[y]&&M[y][x]===44){M[y][x]=34;tls++}}
+ /* Contenedores (35) sueltos sobre el hormigón de la ciudad (no en
+    las calles ni sobre la hierba). */
+ const nearCont=(x,y)=>{for(let j=y-1;j<=y+1;j++)for(let i=x-1;i<=x+1;i++)if(M[j]&&M[j][i]===35)return true;return false};
  let conts=0,cog=0;
  while(conts<8&&cog++<400){
   const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
-  if(M[y]&&M[y][x]===0&&BM[y*MW+x]===2&&!nearRuin(x,y)){M[y][x]=35;conts++}}
+  if(M[y]&&M[y][x]===44&&!nearCont(x,y)){M[y][x]=35;conts++}}
+ /* --- CAMINITOS Y PLAZAS (48/49/50): los callejones entre edificios
+    se pavimentan con piedra (48), baldosa de plaza (49) o baldosa
+    agrietada (50), distintos del hormigón gris (44); las plazas se
+    pavimentan enteras en damero. --- */
+ for(let y=cityY0;y<=cityY1;y++)for(let x=cityX0;x<=cityX1;x++){
+  if(M[y][x]!==44)continue;
+  const lr=M[y][x-1]===36&&M[y][x+1]===36,ud=M[y-1]&&M[y-1][x]===36&&M[y+1]&&M[y+1][x]===36;
+  if(lr||ud){const r=hsU(x,y,96);M[y][x]=r<0.7?48:r<0.85?49:50}
+ }
+ for(let y=cityY0;y<=cityY1;y++)for(let x=cityX0;x<=cityX1;x++){
+  if(M[y][x]!==44)continue;
+  let pn=0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const t=M[y+d[1]]&&M[y+d[1]][x+d[0]];if(t===48||t===49||t===50)pn++}
+  if(pn>=2&&hsU(x,y,99)>0.5){const r=hsU(x,y,100);M[y][x]=r<0.7?48:r<0.85?49:50}
+ }
+ for(const q of plazaRects)for(let j=q[1];j<q[1]+q[3];j++)for(let i=q[0];i<q[0]+q[2];i++){
+  if(M[j][i]===44){const r=hsU(i,j,97);M[j][i]=r<0.6?49:r<0.8?48:50}
+ }
+ /* --- VALLAS (45/46/47) bordeando los caminitos --- */
+ /* Tramos cortos (2-4) sobre hormigón junto a un muro, de madera,
+    metal o ladrillo, bordeando los callejones (los callejones SON los
+    caminitos peatonales; las vallas van pegadas a sus muros y dejan
+    siempre 1 tile libre al lado, así que nunca sellan un paso; el
+    reparador de bolsillos puede quitar una valla si algo quedara
+    aislado). Las candidatas se ordenan por hsU (reparto uniforme por
+    toda la ciudad) y se toman hasta 48: con muestreo aleatorio solo
+    salían 4-17 porque los tiles válidos son ~1 de cada 100. */
+ const fenceOk=(x,y)=>M[y]&&M[y][x]===44&&(M[y][x-1]===36||M[y][x+1]===36||(M[y-1]&&M[y-1][x]===36)||(M[y+1]&&M[y+1][x]===36));
+ const fenceStarts=[];
+ for(let y=cityY0+1;y<cityY1;y++)for(let x=cityX0+1;x<cityX1;x++)if(fenceOk(x,y))fenceStarts.push([x,y,hsU(x,y,101)]);
+ fenceStarts.sort((a,b)=>a[2]-b[2]);
+ let fences=0;
+ for(const st of fenceStarts){
+  if(fences>=48)break;
+  const x=st[0],y=st[1];
+  if(!fenceOk(x,y))continue;
+  if(FENCE_T.includes(M[y][x-1])||(M[y-1]&&FENCE_T.includes(M[y-1][x])))continue;
+  const alongY=(M[y][x-1]===36||M[y][x+1]===36);
+  const len=2+((hsU(x,y,99)*3)|0),ft=45+((hsU(x+31,y+17,100)*3)|0);
+  for(let k=0;k<len&&fences<48;k++){
+   const fx=alongY?x:x+k,fy=alongY?y+k:y;
+   if(!fenceOk(fx,fy))break;
+   M[fy][fx]=ft;fences++;
+  }
+ }
+ /* --- FAROLAS (51), BANCAS (52) Y JARDINERAS (53) --- */
+ /* Farolas en la acera junto a la calle; bancas en las plazas o contra
+    un muro; jardineras en las plazas o contra un muro. Son sólidos,
+    pero van en acera ancha, nunca en un callejón de 1 tile. */
+ const nearRoad=(x,y)=>{for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const t=M[y+d[1]]&&M[y+d[1]][x+d[0]];if(isRoadT(t))return true}return false};
+ let lamps=0,lag=0;
+ while(lamps<14&&lag++<500){
+  const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
+  if(M[y]&&M[y][x]===44&&nearRoad(x,y)){M[y][x]=51;lamps++}}
+ let bench=0,beg=0;
+ while(bench<10&&beg++<500){
+  const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
+  if(M[y]&&M[y][x]===44&&(inPlaza(x,y)||(M[y-1]&&M[y-1][x]===36))){M[y][x]=52;bench++}}
+ let plant=0,plag=0;
+ while(plant<12&&plag++<500){
+  const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
+  if(M[y]&&M[y][x]===44&&(inPlaza(x,y)||(M[y+1]&&M[y+1][x]===36))){M[y][x]=53;plant++}}
+ /* --- ALCANTARILLAS (54) Y CHARCOS (55) --- */
+ /* Alcantarillas en la calle o en la acera; charcos en la acera junto
+    a un muro (a la sombra del edificio). */
+ let mh=0,mg=0;
+ while(mh<10&&mg++<400){
+  const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
+  if(M[y]&&(M[y][x]===11||M[y][x]===44)){M[y][x]=54;mh++}}
+ let pud=0,pug=0;
+ while(pud<12&&pug++<400){
+  const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);
+  if(M[y]&&M[y][x]===44&&nearRuin(x,y)){M[y][x]=55;pud++}}
  /* Losas agrietadas y escombros sobre el asfalto (decoración, no bloquean). */
- for(let i=0;i<60;i++){const sy=streetYs[(rnd()*streetYs.length)|0]+(rnd()<0.5?0:1);const x=cityX0+(rnd()*(cityX1-cityX0)|0);if(M[sy]&&M[sy][x]===11)M[sy][x]=12}
- for(let i=0;i<40;i++){const sy=streetYs[(rnd()*streetYs.length)|0]+(rnd()<0.5?0:1);const x=cityX0+(rnd()*(cityX1-cityX0)|0);if(M[sy]&&M[sy][x]===11)M[sy][x]=16}
+ for(let i=0;i<90;i++){const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);if(M[y]&&M[y][x]===11)M[y][x]=12}
+ for(let i=0;i<60;i++){const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);if(M[y]&&M[y][x]===11)M[y][x]=16}
+ /* Escombros en las aceras junto a los edificios (restos de la ruina). */
+ for(let i=0;i<20;i++){const x=cityX0+(rnd()*(cityX1-cityX0)|0),y=cityY0+(rnd()*(cityY1-cityY0)|0);if(M[y]&&M[y][x]===44&&nearRuin(x,y))M[y][x]=16}
  /* --- RUINAS DE PIEDRA (25/26/27) pequeñas en pradera y bosque --- */
  let statuePlaced=false;
  const placeRuin=(x,y,w,h)=>{let ok=true;for(let j=y;j<y+h&&ok;j++)for(let i=x;i<x+w&&ok;i++)if(!M[j]||M[j][i]!==0)ok=false;if(!ok)return false;
@@ -776,7 +1109,7 @@ function buildMap(seed){
  /* Conectividad: todo el terreno debe ser alcanzable desde el spawn
     (sin bolsas aisladas donde se atasquen los zombis). Los árboles y
     cactus se cuentan como pasables (se rodea el tronco dentro del tile). */
- const passT=(x,y)=>{const t=M[y]&&M[y][x];return t!==undefined&&(t===0||t===1||t===3||t===6||t===7||t===11||t===12||t===13||t===16||t===20||t===21||t===22||t===23||t===30||t===31||t===32||t===33||t===38||t===41||t===42)};
+ const passT=(x,y)=>{const t=M[y]&&M[y][x];return t!==undefined&&(t===0||t===1||t===3||t===6||t===7||t===11||t===12||t===13||t===16||t===20||t===21||t===22||t===23||t===30||t===31||t===32||t===33||t===38||t===41||t===42||t===44||t===48||t===49||t===50||t===54||t===55)};
  let seen=new Set(),qq=[];
  const flood=()=>{seen=new Set([spawnTX+','+spawnTY]);qq=[[spawnTX,spawnTY]];
   while(qq.length){const cur=qq.pop(),qx=cur[0],qy=cur[1];for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=qx+d[0],ny=qy+d[1],k=nx+','+ny;if(!seen.has(k)&&passT(nx,ny)){seen.add(k);qq.push([nx,ny])}}}};
@@ -793,7 +1126,16 @@ function buildMap(seed){
   for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){
    if(!WALK_T.includes(M[y][x])||seen.has(x+','+y))continue;
    for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1],t=M[ny]&&M[ny][nx];
-    if(t===5||t===9||t===2||t===25||t===26||t===27||t===14||t===15||t===35||t===36){M[ny][nx]=0;openedAny=true;break}}
+    if(t===5||t===9||t===2||t===25||t===26||t===27||t===14||t===15||t===35||t===36||t===45||t===46||t===47||t===51||t===52||t===53||t===56||t===57){
+     /* Al abrir se deja el suelo del entorno, no hierba: un obstáculo
+        quitado en el desierto dejaba un cuadrado verde en la arena
+        (y en la ciudad, un cuadrado verde en el hormigón). */
+     let s32=0,s41=0,s44=0;
+     for(let j2=ny-1;j2<=ny+1;j2++)for(let i2=nx-1;i2<=nx+1;i2++){
+      const u=M[j2]&&M[j2][i2];
+      if(u===32||u===33||u===13)s32++;else if(u===41||u===42)s41++;else if(u===44||u===36||u===35||u===48||u===49||u===50)s44++;
+     }
+     M[ny][nx]=s32>=3?32:s41>=3?41:s44>=3?44:0;openedAny=true;break}}
   }
   flood();
   let rocked=0;
@@ -821,7 +1163,7 @@ function buildMap(seed){
  genSeaElems();
  chunkCache.clear();
 }
-const sol=(x,y)=>{const tx=Math.floor(x/T),ty=Math.floor(y/T);if(tx<0||ty<0||tx>=MW||ty>=MH)return true;const t=M[ty][tx];if(t===3||t===21||t===22||t===23||t===30||t===31||t===33||t===42){const lx=x-tx*T,ly=y-ty*T;return lx>10&&lx<22&&ly>16&&ly<30}if(t===6||t===7||t===11||t===12||t===13||t===16||t===20||t===32||t===38||t===41)return false;return t>=2};
+const sol=(x,y)=>{const tx=Math.floor(x/T),ty=Math.floor(y/T);if(tx<0||ty<0||tx>=MW||ty>=MH)return true;const t=M[ty][tx];if(t===3||t===21||t===22||t===23||t===30||t===31||t===33||t===42){const lx=x-tx*T,ly=y-ty*T;return lx>10&&lx<22&&ly>16&&ly<30}if(t===6||t===7||t===11||t===12||t===13||t===16||t===20||t===32||t===38||t===41||t===44||t===48||t===49||t===50||t===54||t===55)return false;return t>=2};
 /* ---------- MAPA POR TROZOS (chunks, v2026-11-23c) ---------- */
 /* El mapa ya NO se prerenderiza entero en dos lienzos gigantes (eso
    limitaba el tamaño por memoria y por el tope del lienzo del navegador,
@@ -969,8 +1311,14 @@ function paintGround(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T,g=t===1;
     llega al mar y el puente cruza el agua. */
  const wat=(t===37||t===38||t===39||t===40||t===43);
  if(!wat&&Math.hypot(dx,dy)>=islandR(Math.atan2(dy,dx))-SAND_W)return;
- R2(mc,x,y,T,T,g?'#6b5a42':['#3b4a2e','#42552f','#33402a','#46582e'][(hs(tx,ty,201)*4)|0]);
- if(!g){/* hierba con variedad: manchas de tono, briznas, flores, tréboles y hongos */
+ /* Suelo del tile: cada objeto se asienta sobre el suelo DE SU BIOMA
+    (arena bajo el cactus, pantano bajo el árbol de pantano, hormigón
+    bajo la ciudad, asfalto bajo los coches) y NUNCA sobre hierba
+    prestada. Los detalles de hierba (briznas, flores, tréboles,
+    hongos) solo se pintan si el suelo es hierba de verdad. */
+ const soil=groundSoil(tx,ty);
+ R2(mc,x,y,T,T,g?'#6b5a42':soil==='sand'?'#d8b878':soil==='swamp'?'#3a3a2e':soil==='concrete'?'#8a8a82':soil==='asphalt'?'#3a3a3e':soil==='path'?'#9a8f7a':soil==='plaza'?'#a89a80':soil==='cracked'?'#7a7a72':soil==='dirt'?'#6b5a42':['#3b4a2e','#42552f','#33402a','#46582e'][(hs(tx,ty,201)*4)|0]);
+ if(!g&&soil==='grass'){/* hierba con variedad: manchas de tono, briznas, flores, tréboles y hongos */
   for(let k=0;k<3;k++)R2(mc,x+(hs(tx,ty,k+90)*26|0),y+(hs(tx,ty,k+95)*26|0),5,4,k%2?'rgba(74,90,56,0.5)':'rgba(43,58,32,0.5)');
   for(let k=0;k<9;k++)R2(mc,x+(hs(tx,ty,k)*30|0),y+(hs(tx,ty,k+20)*30|0),2,2,k%2?'#2f3d25':'#4a5a38');
   for(let k=0;k<5;k++){const bx=x+3+(hs(tx,ty,k+110)*26|0),by=y+4+(hs(tx,ty,k+120)*26|0);R2(mc,bx,by,1,3,k%2?'#5a7038':'#2f3d25')}
@@ -985,22 +1333,50 @@ function paintGround(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T,g=t===1;
   if(hs(tx,ty,14)>.6)R2(mc,x+6+(hs(tx,ty,15)*20|0),y+6+(hs(tx,ty,16)*20|0),2,2,'#8a7a68')}
  if(t===6){R2(mc,x+8,y+24,16,3,'rgba(0,0,0,.25)');disc(mc,x+12,y+20,8,'#1f3520');disc(mc,x+20,y+18,7,'#2c4a28');disc(mc,x+16,y+14,6,'#3a5a30');disc(mc,x+13,y+12,4,'#4a6a3a')}
  if(t===7){for(let k=0;k<4;k++){const fx=x+4+(hs(tx,ty,k+40)*24|0),fy=y+4+(hs(tx,ty,k+60)*24|0);R2(mc,fx+1,fy+3,1,3,'#2c4a28');R2(mc,fx,fy,3,3,['#c0283a','#d9b13b','#f0f0f0','#e8742c'][k%4]);R2(mc,fx,fy,1,1,'#fff3b0')}}
- if(t===12){/* losa de piedra agrietada: base de tierra del sendero + losas grises con juntas y grieta */
-  R2(mc,x,y,T,T,'#6b5a42');
+ if(t===12){/* losa de piedra agrietada: base del suelo donde está
+   (asfalto en la calle, hormigón en la acera) + losas grises */
+  R2(mc,x,y,T,T,soil==='asphalt'?'#3a3a3e':soil==='concrete'?'#8a8a82':'#6b5a42');
   R2(mc,x+3,y+3,12,12,'#7a7a72');R2(mc,x+17,y+3,12,12,'#6a6a62');R2(mc,x+3,y+17,12,12,'#74746c');R2(mc,x+17,y+17,12,12,'#7a7a72');
   R2(mc,x+3,y+3,12,2,'#8a8a82');R2(mc,x+17,y+3,12,2,'#8a8a82');R2(mc,x+3,y+17,12,2,'#8a8a82');R2(mc,x+17,y+17,12,2,'#8a8a82');
   let px=x+8+((hs(tx,ty,1)*16)|0),py=y+4;for(let k=0;k<3;k++){const nx=px+(((hs(tx,ty,k+5)*10)|0)-5),ny=py+8;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+2,2,'#3a3a34');R2(mc,nx,py,2,8,'#3a3a34');px=nx;py=ny}
   if(hs(tx,ty,21)>.6)R2(mc,x+22,y+22,3,3,'#5a6a3a')}
  if(t===13){R2(mc,x,y,T,T,'#6b5a42');for(let k=0;k<8;k++)R2(mc,x+(hs(tx,ty,k)*30|0),y+(hs(tx,ty,k+30)*30|0),2,2,k%2?'#5a4a36':'#7a6850');R2(mc,x+10,y+12,8,4,'rgba(70,56,40,0.4)')}
- if(t===16){R2(mc,x,y,T,T,'#6b5a42');disc(mc,x+10,y+12,5,'#5a5a5a');disc(mc,x+22,y+20,6,'#4a4a4a');disc(mc,x+18,y+8,4,'#6a6a6a');R2(mc,x+6,y+24,8,3,'#7a7a7a');R2(mc,x+14,y+26,3,2,'#8a8a8a');R2(mc,x+26,y+14,2,2,'#6a6a6a')}
- if(t===11){/* asfalto: gris oscuro con línea central amarilla discontinua
-   (según la orientación de la calle: vecinas de asfalto) */
+ if(t===16){R2(mc,x,y,T,T,soil==='asphalt'?'#3a3a3e':soil==='concrete'?'#8a8a82':'#6b5a42');disc(mc,x+10,y+12,5,'#5a5a5a');disc(mc,x+22,y+20,6,'#4a4a4a');disc(mc,x+18,y+8,4,'#6a6a6a');R2(mc,x+6,y+24,8,3,'#7a7a7a');R2(mc,x+14,y+26,3,2,'#8a8a8a');R2(mc,x+26,y+14,2,2,'#6a6a6a')}
+ if(t===11){/* asfalto: gris oscuro con UNA sola línea central amarilla
+   discontinua, PARALELA a la calle. La orientación sale de la
+   longitud de la racha de calzada en cada eje (una calle horizontal
+   tiene una racha horizontal larga y una vertical de solo 2-3 tiles,
+   su ancho; en un cruce ambas son largas y NO hay línea). La línea
+   va en el centro de la calle: si la calle tiene 2 de ancho, la
+   dibuja solo la fila/columna superior/izquierda, EXACTAMENTE en el
+   borde entre las dos (y+31 / x+31); si tiene 3, la dibuja la fila/
+   columna central, en su propio centro. Nunca una raya por baldosa. */
   R2(mc,x,y,T,T,'#3a3a3e');for(let k=0;k<6;k++)R2(mc,x+(hs(tx,ty,k)*30|0),y+(hs(tx,ty,k+30)*30|0),2,2,k%2?'#2a2a2e':'#4a4a4e');
-  const hor=(M[ty][tx-1]===11||M[ty][tx+1]===11),ver=(M[ty-1]&&M[ty-1][tx]===11)||(M[ty+1]&&M[ty+1][tx]===11);
-  if(hor&&!ver){if(tx%2===0)R2(mc,x+4,y+15,12,2,'#d9b13b');else R2(mc,x+18,y+15,12,2,'#d9b13b')}
-  else if(ver){if(ty%2===0)R2(mc,x+15,y+4,2,12,'#d9b13b');else R2(mc,x+15,y+18,2,12,'#d9b13b')}
-  if(hs(tx,ty,44)>.7)R2(mc,x+6+(hs(tx,ty,45)*20|0),y+6+(hs(tx,ty,46)*20|0),4,2,'#2a2a2e')}
- if(t===32){/* arena de desierto: dorada con dunas (manchas suaves) y guijarros */
+  const o=streetOrient(tx,ty);
+  if(o==='H'){
+   const w=roadRun(tx,ty)[1]; /* ancho de la calle */
+   const top=!isRoadT(M[ty-1]&&M[ty-1][tx]),mid=isRoadT(M[ty-1]&&M[ty-1][tx])&&isRoadT(M[ty+1]&&M[ty+1][tx]);
+   if(w===2&&top)R2(mc,x+7,y+31,18,2,'#d9b13b');
+   else if(w===3&&mid)R2(mc,x+7,y+15,18,2,'#d9b13b');
+   else if(w===1)R2(mc,x+7,y+15,18,2,'#d9b13b');
+  }else if(o==='V'){
+   const w=roadRun(tx,ty)[0]; /* ancho de la calle */
+   const left=!isRoadT(M[ty][tx-1]),mid=isRoadT(M[ty][tx-1])&&isRoadT(M[ty][tx+1]);
+   if(w===2&&left)R2(mc,x+31,y+7,2,18,'#d9b13b');
+   else if(w===3&&mid)R2(mc,x+15,y+7,2,18,'#d9b13b');
+   else if(w===1)R2(mc,x+15,y+7,2,18,'#d9b13b');
+  }
+  if(hs(tx,ty,44)>.7)R2(mc,x+6+(hs(tx,ty,45)*20|0),y+6+(hs(tx,ty,46)*20|0),4,2,'#2a2a2e')
+  if(!o){/* cruce: paso de cebra (rayas blancas; sin línea amarilla). */
+   const r2=roadRun(tx,ty);if(r2[0]>4&&r2[1]>4){for(let k=0;k<3;k++)R2(mc,x+5+k*11,y+3,5,26,'rgba(230,230,220,0.7)')}}}
+ if(soil==='asphalt'&&t!==11){/* coche/furgoneta: el asfalto de debajo
+   lleva las mismas motas que la calle (sin línea central: el
+   vehículo la tapa y no se pinta raya bajo un coche). */
+  for(let k=0;k<6;k++)R2(mc,x+(hs(tx,ty,k)*30|0),y+(hs(tx,ty,k+30)*30|0),2,2,k%2?'#2a2a2e':'#4a4a4e')}
+ if(t===32||(soil==='sand'&&t!==13)){/* arena de desierto: dorada con dunas (manchas suaves) y guijarros.
+   También es el suelo del cactus (33) y de la tierra (13): la rama
+   t===13 pinta después su parche de tierra encima, por eso se
+   excluye aquí (si no, la arena taparía el parche). */
   R2(mc,x,y,T,T,'#d8b878');for(let k=0;k<3;k++)R2(mc,x+(hs(tx,ty,k+90)*26|0),y+(hs(tx,ty,k+95)*26|0),6,4,k%2?'rgba(200,160,100,0.5)':'rgba(230,200,140,0.5)');
   for(let k=0;k<7;k++)R2(mc,x+(hs(tx,ty,k)*30|0),y+(hs(tx,ty,k+20)*30|0),2,2,k%2?'#c0a068':'#e8d098');
   if(hs(tx,ty,47)>.6)R2(mc,x+6+(hs(tx,ty,48)*20|0),y+6+(hs(tx,ty,49)*20|0),3,2,'#a89060')}
@@ -1011,10 +1387,21 @@ function paintGround(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T,g=t===1;
  if(t===40){/* agua de pantano: morada con burbujas y manchas oscuras */
   R2(mc,x,y,T,T,'#6a4a8a');for(let k=0;k<4;k++)R2(mc,x+4+(hs(tx,ty,k+50)*24|0),y+4+(hs(tx,ty,k+60)*24|0),4,3,k%2?'rgba(140,100,180,0.5)':'rgba(80,50,110,0.5)');
   if(hs(tx,ty,47)>.5)R2(mc,x+8+(hs(tx,ty,48)*16|0),y+8+(hs(tx,ty,49)*16|0),2,2,'#c0a0e0')}
- if(t===41){/* suelo de pantano: verde oscuro con morado, hongos y raíces */
+ if(t===41||soil==='swamp'){/* suelo de pantano: verde oscuro con morado, hongos y raíces.
+   También es el suelo del árbol de pantano (42). */
   R2(mc,x,y,T,T,'#3a3a2e');for(let k=0;k<3;k++)R2(mc,x+(hs(tx,ty,k+90)*26|0),y+(hs(tx,ty,k+95)*26|0),5,4,k%2?'rgba(90,70,110,0.4)':'rgba(50,60,40,0.5)');
   if(hs(tx,ty,47)>.5){const mx2=x+8+(hs(tx,ty,48)*16|0),my2=y+8+(hs(tx,ty,49)*16|0);R2(mc,mx2,my2+2,1,3,'#e8e0d0');R2(mc,mx2-1,my2,4,2,'#b06ac0');R2(mc,mx2,my2,1,1,'#f0f0f0')}
   if(hs(tx,ty,51)>.6)R2(mc,x+4+(hs(tx,ty,52)*24|0),y+10+(hs(tx,ty,53)*12|0),8,2,'#2a2a20')}
+ if(t===44||soil==='concrete'){/* hormigón/acera: losas grises con juntas,
+   alguna grieta, hierba que asoma por las juntas y manchas. También
+   es el suelo de semáforos (34), contenedores (35) y edificios (36). */
+  R2(mc,x,y,T,T,'#8a8a82');
+  R2(mc,x,y,16,16,'#8f8f87');R2(mc,x+16,y,16,16,'#85857d');R2(mc,x,y+16,16,16,'#86867e');R2(mc,x+16,y+16,16,16,'#8a8a82');
+  R2(mc,x+15,y,2,32,'#6a6a62');R2(mc,x,y+15,32,2,'#6a6a62');
+  if(hs(tx,ty,54)>.6){let px=x+4+((hs(tx,ty,55)*24)|0),py=y+4;for(let k=0;k<2;k++){const nx=px+(((hs(tx,ty,56+k)*10)|0)-5),ny=py+10;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+2,1,'#5a5a54');px=nx;py=ny}}
+  if(hs(tx,ty,57)>.75)R2(mc,x+6+(hs(tx,ty,58)*20|0),y+6+(hs(tx,ty,59)*20|0),2,3,'#4a6a3a');
+  if(hs(tx,ty,60)>.8)R2(mc,x+8+(hs(tx,ty,61)*16|0),y+8+(hs(tx,ty,62)*16|0),3,2,'rgba(60,50,40,0.4)')
+  if(hs(tx,ty,118)>.78){R2(mc,x+6+(hs(tx,ty,119)*20|0),y+6+(hs(tx,ty,120)*20|0),2,2,'#c8d8e8');R2(mc,x+10+(hs(tx,ty,121)*16|0),y+12+(hs(tx,ty,122)*12|0),2,1,'#d8e8f8')}}
  if(t===43){/* lago y arroyo: agua azul tranquila con destellos */
   R2(mc,x,y,T,T,'#2a5a8a');for(let k=0;k<3;k++)R2(mc,x+6+(hs(tx,ty,k+50)*20|0),y+6+(hs(tx,ty,k+60)*20|0),3,2,'rgba(140,200,240,0.5)');
   if(hs(tx,ty,47)>.7)R2(mc,x+8+(hs(tx,ty,48)*16|0),y+8+(hs(tx,ty,49)*16|0),2,2,'#c0e0f0')}
@@ -1026,7 +1413,30 @@ function paintGround(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T,g=t===1;
   if(hor){for(let k=0;k<4;k++)R2(mc,x+4+k*7,y+4,5,24,'#7a5a2a');
    R2(mc,x+4,y+4,28,2,'#5a4020');R2(mc,x+4,y+26,28,2,'#5a4020')}
   else{for(let k=0;k<4;k++)R2(mc,x+4,y+4+k*7,24,5,'#7a5a2a');
-   R2(mc,x+4,y+4,2,28,'#5a4020');R2(mc,x+26,y+4,2,28,'#5a4020')}}
+   R2(mc,x+4,y+4,2,28,'#5a4020');R2(mc,x+26,y+4,2,28,'#5a4020')}
+ if(t===48){/* caminito de piedra: losas irregulares con juntas y musgo */
+  R2(mc,x,y,T,T,'#9a8f7a');
+  R2(mc,x+2,y+2,13,13,'#a89a86');R2(mc,x+17,y+2,13,13,'#8f8471');R2(mc,x+2,y+17,13,13,'#948a75');R2(mc,x+17,y+17,13,13,'#a89a86');
+  R2(mc,x+15,y,2,32,'#6a6252');R2(mc,x,y+15,32,2,'#6a6252');
+  if(hs(tx,ty,99)>.6)R2(mc,x+6+(hs(tx,ty,100)*20|0),y+6+(hs(tx,ty,101)*20|0),3,2,'#4a6a3a');
+  if(hs(tx,ty,102)>.7){let px=x+4+((hs(tx,ty,103)*24)|0),py=y+4;for(let k=0;k<2;k++){const nx=px+(((hs(tx,ty,104+k)*10)|0)-5),ny=py+10;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+2,1,'#5a5244');px=nx;py=ny}}}
+ if(t===49){/* baldosa de plaza: damero claro/oscuro desgastado */
+  R2(mc,x,y,T,T,'#a89a80');
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++)if((r+c)%2===0)R2(mc,x+c*8,y+r*8,8,8,'#968a72');
+  R2(mc,x,y,32,1,'#7a705c');R2(mc,x,y+31,32,1,'#7a705c');
+  if(hs(tx,ty,105)>.65)R2(mc,x+6+(hs(tx,ty,106)*20|0),y+6+(hs(tx,ty,107)*20|0),4,2,'rgba(60,50,40,0.35)')}
+ if(t===50){/* baldosa agrietada: hormigón roto con grietas y hierba */
+  R2(mc,x,y,T,T,'#7a7a72');
+  R2(mc,x+2,y+2,14,14,'#83837b');R2(mc,x+16,y+2,14,14,'#74746c');R2(mc,x+2,y+16,14,14,'#7a7a72');R2(mc,x+16,y+16,14,14,'#6a6a62');
+  let px=x+5+((hs(tx,ty,108)*22)|0),py=y+2;for(let k=0;k<3;k++){const nx=px+(((hs(tx,ty,109+k)*12)|0)-6),ny=py+10;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+1,2,'#3a3a34');R2(mc,nx,py,2,10,'#3a3a34');px=nx;py=ny}
+  if(hs(tx,ty,112)>.55)R2(mc,x+8+(hs(tx,ty,113)*16|0),y+8+(hs(tx,ty,114)*16|0),2,3,'#4a6a3a')}
+ if(t===54){/* alcantarilla: rejilla oscura sobre asfalto u hormigón */
+  R2(mc,x+6,y+6,20,20,'#2a2a2e');R2(mc,x+6,y+6,20,2,'#4a4a4e');
+  for(let k=0;k<4;k++)R2(mc,x+8+k*5,y+8,2,16,'#4a4a4e');
+  R2(mc,x+6,y+6,2,20,'#4a4a4e');R2(mc,x+24,y+6,2,20,'#4a4a4e')}
+ if(t===55){/* charco: agua estancada con reflejo y borde oscuro */
+  R2(mc,x+4,y+8,24,16,'#3a4a5a');R2(mc,x+6,y+10,20,3,'#5a7a9a');R2(mc,x+8,y+18,12,2,'#2a3a4a');
+  R2(mc,x+4,y+8,24,2,'#6a8aaa');if(hs(tx,ty,115)>.5)R2(mc,x+10+(hs(tx,ty,116)*12|0),y+12,4,1,'rgba(220,230,240,0.6)')}}
 }
 /* Pinta el objeto de un tile (árbol, edificio, caja, coche...). */
 function paintObject(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T;
@@ -1124,15 +1534,83 @@ function paintObject(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T;
   for(let k=0;k<4;k++)R2(mc,x+6+k*6,y+8,2,20,'rgba(0,0,0,0.25)');
   R2(mc,x+14,y+8,2,20,'#2a1a10');
   if(hs(tx,ty,64)>.5)R2(mc,x+6,y+12,8,5,'#a89070')}
- if(t===36){/* edificio en ruinas: muro de hormigón con ventanas rotas,
-   grietas y varillas expuestas (distinto de la ruina de piedra 25) */
-  R2(mc,x+2,y+28,28,3,'rgba(0,0,0,.3)');
-  R2(mc,x+2,y+6,28,24,'#8a8a82');R2(mc,x+2,y+6,28,3,'#a8a8a0');R2(mc,x+2,y+6,3,24,'#9a9a92');R2(mc,x+27,y+6,3,24,'#6a6a62');
-  R2(mc,x+6,y+10,7,6,'#2a2a2e');R2(mc,x+6,y+10,7,2,'#4a4a44');R2(mc,x+19,y+10,7,6,'#2a2a2e');
-  R2(mc,x+6,y+20,7,6,'#2a2a2e');R2(mc,x+19,y+20,7,6,'#3a3a3e');
-  R2(mc,x+12,y+6,2,10,'#5a5a54');R2(mc,x+14,y+12,6,2,'#5a5a54');
-  if(hs(tx,ty,65)>.5){R2(mc,x+4,y+6,8,3,'#6a6a62');R2(mc,x+4,y+6,2,6,'#7a7a72')}
-  if(hs(tx,ty,66)>.6)R2(mc,x+20,y+26,8,3,'#4a6a3a')}
+ if(t===36){/* EDIFICIO v2026-11-23e: alto e imponente, no un juguete.
+   La variante sale del ancla (buildingInfo): 2-5 pisos, 7 colores,
+   3 techos, destruidos, negocios. Cada tile dibuja su parte: muro
+   continuo, tejado solo en la fila superior, ventanas GRANDES
+   (11 px de ancho, 9-12 de alto) en bandas por piso sobre TODA la
+   huella, con marco, parteluz y alféizar; líneas entre pisos, sombras
+   más marcadas, manchas y grietas en el muro. */
+  const up=M[ty-1]&&M[ty-1][tx]===36,dn=M[ty+1]&&M[ty+1][tx]===36,lf=M[ty][tx-1]===36,rt=M[ty][tx+1]===36;
+  let ax=tx,ay=ty;
+  while(ay>0&&M[ay-1]&&M[ay-1][ax]===36)ay--;
+  while(ax>0&&M[ay]&&M[ay][ax-1]===36)ax--;
+  const bi=buildingInfo(ax,ay),vWall=bi.wall,vDark=shade(vWall,-0.35),vLight=shade(vWall,0.18),vRoof=bi.roof;
+  const floors=bi.floors,ruined=bi.ruined,shop=bi.shop,roofKind=bi.roofKind,signCol=bi.signCol;
+  const bh=bi.bh;
+  R2(mc,x,y,T,T,ruined?shade(vWall,-0.15):vWall);
+  if(!lf)R2(mc,x,y,3,T,vDark);
+  if(!rt)R2(mc,x+29,y,3,T,vDark);
+  if(!up)R2(mc,x,y,T,2,vLight);
+  if(!dn)R2(mc,x,y+29,T,3,'rgba(0,0,0,'+(0.3+0.08*floors)+')');
+  /* Textura del muro: vetas verticales suaves y manchas. */
+  for(let k=0;k<3;k++){const sx2=x+5+(hs(tx,ty,130+k)*22|0);R2(mc,sx2,y+4,2,24,'rgba(0,0,0,0.07)')}
+  if(hs(tx,ty,140)>.7)R2(mc,x+8+(hs(tx,ty,141)*16|0),y+6,4,10,'rgba(0,0,0,0.12)');
+  if(!up){
+   if(ruined){
+    if(hs(tx,ty,78)>.45){R2(mc,x,y,T,12,'#2a2320');disc(mc,x+10,y+8,4,'#5a5a5a');disc(mc,x+20,y+6,3,'#4a4a4a');R2(mc,x+6,y+10,5,2,'#6a5a4a')}
+    else{R2(mc,x,y,T,12,vRoof);R2(mc,x,y,T,2,vLight)}
+   }else if(roofKind===1){
+    R2(mc,x,y,T,12,vRoof);
+    for(let k=0;k<4;k++)R2(mc,x+k*8,y,4,12,k%2?vLight:vDark);
+    R2(mc,x,y+11,T,2,vDark);
+   }else{
+    R2(mc,x,y,T,12,vRoof);R2(mc,x,y,T,2,vLight);R2(mc,x,y+10,T,2,vDark);
+    if(roofKind===2&&tx===ax){R2(mc,x+6,y+2,10,8,'#6a6a62');R2(mc,x+5,y+1,12,2,'#8a8a82')}
+    if(tx===ax+1&&hs(ax,ay,80)>.5){R2(mc,x+8,y+4,8,6,'#7a7a72');R2(mc,x+9,y+5,6,2,'#9a9a92')}
+    if(tx===ax&&hs(ax,ay,81)>.7){R2(mc,x+22,y+1,5,9,'#8a4a30');R2(mc,x+21,y,7,2,'#6a3a20')}
+    if(tx===ax+2&&hs(ax,ay,142)>.6){R2(mc,x+14,y+2,2,8,'#3a3a3a');R2(mc,x+10,y+2,10,2,'#3a3a3a')}
+   }
+  }
+  if(shop&&!dn){
+   R2(mc,x,y+6,T,8,signCol);
+   for(let k=0;k<5;k++)R2(mc,x+4+k*6,y+9,3,2,'rgba(240,240,230,0.85)');
+   for(let k=0;k<8;k++)R2(mc,x+k*4,y+18,4,10,k%2?signCol:'#e8e0d0');
+   for(let k=0;k<4;k++)R2(mc,x+6+k*6,y+12,3,1,'rgba(240,240,230,0.6)');
+  }else{
+   /* Ventanas por piso: la altura útil es la huella menos el tejado
+      (12 px); cada piso es una banda y la ventana va centrada en
+      ella, 11 px de ancho y 9-12 de alto, con marco y parteluz. */
+   const usable=bh*T-12,fh=usable/floors,wh=Math.max(8,Math.min(12,fh-4));
+   for(let k=0;k<floors;k++){
+    const wy0=ay*T+12+k*fh+(fh-wh)/2;
+    const sepY=ay*T+12+k*fh;
+    if(k>0&&sepY>=y&&sepY<y+T)R2(mc,x,Math.round(sepY),T,2,'rgba(0,0,0,0.28)');
+    const cy0=Math.max(wy0,y),cy1=Math.min(wy0+wh,y+T);
+    if(cy1-cy0<4)continue;
+    for(const wx of [4,17]){
+     const br=hs(tx,ty,82+k*7+wx);
+     R2(mc,x+wx-1,Math.round(cy0)-1,13,Math.round(cy1-cy0)+2,ruined?'#2a2a28':vDark);
+     if(ruined&&br>.45){R2(mc,x+wx,Math.round(cy0),11,Math.round(cy1-cy0),'#17171a');R2(mc,x+wx+1,Math.round(cy0)+2,9,2,'#4a4a44');R2(mc,x+wx+2,Math.round(cy0),2,Math.round(cy1-cy0),'#5a4a3a')}
+     else if(br>.88){R2(mc,x+wx,Math.round(cy0),11,Math.round(cy1-cy0),'#2a2a2e');R2(mc,x+wx,Math.round(cy0)+3,11,2,'#6a5a3a');R2(mc,x+wx+4,Math.round(cy0),2,Math.round(cy1-cy0),'#6a5a3a')}
+     else if(br>.62){R2(mc,x+wx,Math.round(cy0),11,Math.round(cy1-cy0),'#ffd166');R2(mc,x+wx+1,Math.round(cy0)+1,4,4,'#fff3b0');R2(mc,x+wx+5,Math.round(cy0),1,Math.round(cy1-cy0),'#8a6a2a');R2(mc,x+wx,Math.round(cy0)+Math.floor((cy1-cy0)/2),11,1,'#8a6a2a')}
+     else{R2(mc,x+wx,Math.round(cy0),11,Math.round(cy1-cy0),'#1a1a20');R2(mc,x+wx+5,Math.round(cy0),1,Math.round(cy1-cy0),'#3a3a44');R2(mc,x+wx,Math.round(cy0)+Math.floor((cy1-cy0)/2),11,1,'#3a3a44');R2(mc,x+wx+1,Math.round(cy0)+1,3,3,'rgba(120,160,200,0.35)')}
+     if(cy1+2<=y+T)R2(mc,x+wx-1,Math.round(cy1)+1,13,2,ruined?'#3a3a34':vLight);
+     if(hs(tx,ty,143+k*3+wx)>.6)R2(mc,x+wx+4,Math.round(cy1)+3,3,4,'rgba(0,0,0,0.18)');
+    }
+   }
+   if(!ruined&&!up&&hs(ax,ay,144)>.8){R2(mc,x+6,y+14,20,6,'rgba(200,190,170,0.5)');R2(mc,x+8,y+16,16,2,'rgba(60,50,40,0.5)')}
+  }
+  if(ruined){
+   let px=x+6+((hs(tx,ty,84)*20)|0),py=y+2;
+   for(let k=0;k<3;k++){const nx=px+(((hs(tx,ty,85+k)*12)|0)-6),ny=py+9;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+1,2,'#3a3a34');R2(mc,nx,py,2,9,'#3a3a34');px=nx;py=ny}
+   if(!dn&&(!lf||!rt)&&hs(tx,ty,89)>.4){disc(mc,x+16,y+20,10,'#6a6a62');disc(mc,x+12,y+16,6,'#7a7a72');disc(mc,x+20,y+22,5,'#5a5a5a');R2(mc,x+10,y+24,8,2,'#8a7a6a')}
+  }else if(hs(tx,ty,145)>.82){
+   let px=x+8+((hs(tx,ty,146)*16)|0),py=y+4;
+   for(let k=0;k<2;k++){const nx=px+(((hs(tx,ty,147+k)*10)|0)-5),ny=py+10;R2(mc,Math.min(px,nx),py,Math.abs(nx-px)+1,1,'rgba(0,0,0,0.35)');px=nx;py=ny}
+  }
+  if(!dn&&hs(tx,ty,148)>.6)R2(mc,x+4,y+26,10,3,'#4a6a3a');
+ }
  if(t===39){/* cascada: agua cayendo (rayas blancas/azules) con espuma abajo */
   for(let k=0;k<5;k++)R2(mc,x+4+k*5,y+2,3,26,k%2?'#e8f0f8':'#b8d0e8');
   R2(mc,x+2,y+24,28,4,'#f0f8ff');R2(mc,x+6,y+26,20,2,'#d8e8f8');
@@ -1143,6 +1621,49 @@ function paintObject(tx,ty){const t=M[ty][tx],x=tx*T,y=ty*T;
   disc(mc,x+16,y+12,13,'#4a2a5a');disc(mc,x+11,y+8,8,'#5a3a6a');disc(mc,x+21,y+9,7,'#3a2a4a');disc(mc,x+15,y+5,6,'#6a4a7a');
   R2(mc,x+10,y+14,3,3,'#2c5a28');R2(mc,x+20,y+12,3,3,'#2c5a28');
   R2(mc,x+14,y+18,2,6,'#7a8a5a');R2(mc,x+18,y+20,2,5,'#7a8a5a')}
+ /* --- DETALLE URBANO v2026-11-23e (Fase 3): estos tiles existían en el
+    mapa y bloqueaban (sol) pero paintObject NO los dibujaba: eran muros
+    invisibles. Ahora se ven. --- */
+ if(t===45){/* valla de madera: 2 largueros y 3 postes */
+  R2(mc,x+4,y+26,24,3,'rgba(0,0,0,.3)');
+  R2(mc,x+4,y+10,24,3,'#7a5a2a');R2(mc,x+4,y+20,24,3,'#7a5a2a');
+  R2(mc,x+4,y+8,3,18,'#5a4020');R2(mc,x+14,y+8,3,18,'#5a4020');R2(mc,x+25,y+8,3,18,'#5a4020');
+  R2(mc,x+4,y+10,24,1,'#9a7a3a')}
+ if(t===46){/* valla de metal: barrotes grises con largueros */
+  R2(mc,x+4,y+26,24,3,'rgba(0,0,0,.3)');
+  R2(mc,x+4,y+10,24,2,'#8a8a92');R2(mc,x+4,y+20,24,2,'#8a8a92');
+  for(let k=0;k<5;k++)R2(mc,x+5+k*5,y+8,2,16,'#6a6a72');
+  R2(mc,x+4,y+8,3,18,'#4a4a52');R2(mc,x+25,y+8,3,18,'#4a4a52')}
+ if(t===47){/* valla de ladrillo: murete bajo con juntas y remate claro */
+  R2(mc,x+4,y+26,24,3,'rgba(0,0,0,.3)');
+  R2(mc,x+3,y+14,26,12,'#9a5a4a');R2(mc,x+3,y+14,26,2,'#b07a5a');
+  R2(mc,x+3,y+20,26,1,'#6a3a30');R2(mc,x+11,y+14,1,12,'#6a3a30');R2(mc,x+20,y+14,1,12,'#6a3a30')}
+ if(t===51){/* farola: poste oscuro y lámpara cálida encendida */
+  R2(mc,x+12,y+26,8,3,'rgba(0,0,0,.3)');
+  R2(mc,x+14,y+10,4,16,'#3a3a3a');R2(mc,x+14,y+10,4,2,'#5a5a5a');
+  R2(mc,x+11,y+2,10,8,'#2a2a2e');R2(mc,x+13,y+4,6,4,'#ffd166');R2(mc,x+14,y+5,4,2,'#fff3b0')}
+ if(t===52){/* banca: asiento y respaldo de madera con patas oscuras */
+  R2(mc,x+4,y+26,24,3,'rgba(0,0,0,.3)');
+  R2(mc,x+4,y+18,24,4,'#7a5a2a');R2(mc,x+4,y+18,24,1,'#9a7a3a');
+  R2(mc,x+4,y+10,24,4,'#8a6a3a');R2(mc,x+4,y+10,24,1,'#a8804a');
+  R2(mc,x+6,y+22,3,4,'#3a2a1a');R2(mc,x+23,y+22,3,4,'#3a2a1a')}
+ if(t===53){/* jardinera: caja de madera con arbustos verdes */
+  R2(mc,x+4,y+26,24,3,'rgba(0,0,0,.3)');
+  R2(mc,x+4,y+18,24,8,'#6a4a2a');R2(mc,x+4,y+18,24,2,'#8a6a3a');R2(mc,x+4,y+24,24,2,'#4a2a1a');
+  disc(mc,x+11,y+14,6,'#3a6a30');disc(mc,x+21,y+14,6,'#4a7a38');disc(mc,x+16,y+10,5,'#2c5a28')}
+ if(t===56){/* coche quemado: carrocería carbonizada, sin brillo, ceniza */
+  const col='#2a2a2e';
+  R2(mc,x+6,y+26,20,3,'rgba(0,0,0,.3)');
+  R2(mc,x+5,y+9,22,14,col);R2(mc,x+5,y+9,22,3,'#3a3a3e');R2(mc,x+5,y+20,22,3,'#17171a');
+  R2(mc,x+9,y+12,14,4,'#17171a');R2(mc,x+9,y+17,14,4,'#17171a');
+  R2(mc,x+5,y+9,3,14,'#1a1a1a');R2(mc,x+24,y+9,3,14,'#1a1a1a');
+  R2(mc,x+10,y+12,6,3,'#5a5a5a');R2(mc,x+18,y+18,5,2,'#6a6a62')}
+ if(t===57){/* coche volcado: techo abajo, ruedas arriba */
+  R2(mc,x+6,y+26,20,3,'rgba(0,0,0,.3)');
+  R2(mc,x+5,y+14,22,10,'#5a5a5a');R2(mc,x+5,y+14,22,2,'#7a7a72');
+  R2(mc,x+9,y+20,14,4,'#2a3a4a');R2(mc,x+5,y+22,22,2,'#3a3a3a');
+  R2(mc,x+7,y+6,4,8,'#1a1a1a');R2(mc,x+21,y+6,4,8,'#1a1a1a');
+  R2(mc,x+7,y+6,4,2,'#4a4a4e');R2(mc,x+21,y+6,4,2,'#4a4a4e')}
 }
 /* Pinta un solo tile en el `mc` actual (un trozo). El mar (19) y la arena
    (20) NO se pintan por tiles: los pinta la forma suave de la isla.
@@ -1335,7 +1856,13 @@ function finishWave(){waveSpawned=waveTotal;for(const z of Z){if(!z.dead){z.hp=0
 let Pk=[],Sp=[],Bo=[],Dm=[],streak=0,streakT=0,rec={bestWave:0,bestKills:0,bestMoney:0},tileHp={};
 const K={l:0,r:0,u:0,d:0,sh:0},PD={x:0,y:0,rx:0,ry:0,fire:0,run:0,rl:0,start:0};
 const toast=t=>{$('toast').textContent=t;clearTimeout(tt);tt=setTimeout(()=>$('toast').textContent='',1800)};
-function newGame(seed){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;P={x:spawnTX*T+16,y:spawnTY*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];Dm=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();decals.length=0;chunkCache.clear();$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=$('save').hidden=$('saveConfirm').hidden=true;startWave(1);$('wrap').focus();setMenuMusic();syncGodBadge()}
+/* Pantalla de bioma (v2026-11-23e): biome es el id del bioma elegido
+   ('playa','desierto','ciudad','jungla','bosque','pantano','lago'). Si
+   es distinto de la playa, el jugador empieza en ese bioma: lo busca
+   findBiomeSpawn(biome) (la añade la fase de la ciudad en world.js).
+   Respaldo: si findBiomeSpawn falta o no encuentra baldosa caminable,
+   se empieza en la playa sur de siempre. Sin biome (o 'playa'), igual. */
+function newGame(seed,biome){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;let sx=spawnTX,sy=spawnTY;if(biome&&biome!=='playa'&&typeof findBiomeSpawn==='function'){const s=findBiomeSpawn(biome);if(s&&typeof s[0]==='number'&&typeof s[1]==='number'&&M[s[1]]&&WALK_T.includes(M[s[1]][s[0]])){sx=s[0];sy=s[1]}}P={x:sx*T+16,y:sy*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];Dm=[];tileHp={};streak=0;streakT=0;godMode=false;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=rr(20,50);Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();decals.length=0;chunkCache.clear();$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=$('save').hidden=$('saveConfirm').hidden=$('biome').hidden=true;startWave(1);$('wrap').focus();setMenuMusic();syncGodBadge()}
 /* ---------- OLEADAS (dificultad Normal: crece de forma constante) ---------- */
 /* Oleada n trae 6+n*4 zombis (10, 14, 18...), aparecen más rápido y más
    juntos cuanto más alta es la oleada; los corredores e hinchados son
@@ -2106,7 +2633,13 @@ function render(){
  const _wx=weather==='rain'?'rain':weather==='snow'?'snow':'sun';if(_hudWx!==_wx){_hudWx=_wx;drawMiniIcon($('wxIco'),_wx)}}
 function dmgNum(x,y,n,z){if(Dm.length>24)Dm.shift();Dm.push({x:x+rr(-4,4),y:y-6,n:Math.round(n),l:.8,z:z})}
 let last=0;function loop(t){const d=Math.min(.05,(t-last)/1000||0);last=t;if(st==='play')upd(d);else if(st==='dying'||st==='dead')updDead(d);else if(st==='pause')pad();/* Fase F: render() solo cuando el mundo se ve. En menú, pausa, tienda y salida el overlay es opaco y el canvas queda tapado: dibujarlo cada frame (~3-4 ms) era trabajo perdido. En play, dying, dead, timepanel y wxwheel sí se ve. */if(P&&(st==='play'||st==='dying'||st==='dead'||st==='timepanel'||st==='wxwheel'))render();requestAnimationFrame(loop)}
-$('play').onclick=()=>{ac();newGame()};
+/* Pantalla de bioma (v2026-11-23e): JUGAR ya no arranca la partida
+   directamente: muestra #biome y st se queda en 'menu' (la música del
+   menú sigue sonando). Cada bioma arranca una partida nueva con semilla
+   aleatoria en ese bioma; VOLVER regresa al menú principal. */
+$('play').onclick=()=>{ac();$('menu').hidden=true;$('biome').hidden=false};
+[['biomePlaya','playa'],['biomeCiudad','ciudad'],['biomeJungla','jungla'],['biomeBosque','bosque']].forEach(([id,b])=>{$(id).onclick=()=>{ac();newGame(undefined,b)}});
+$('biomeBack').onclick=()=>{$('biome').hidden=true;$('menu').hidden=false};
 drawMiniIcon($('klIco'),'skull');drawMiniIcon($('mnIco'),'money');drawMiniIcon($('zcIco'),'zombie');drawMiniIcon($('shIco'),'money');drawMiniIcon($('wammoIco'),'bullet');drawMiniIcon($('wxIcoSun'),'sun');drawMiniIcon($('wxIcoRain'),'rain');drawMiniIcon($('wxIcoSnow'),'snow');
 $('clockBtn').onclick=()=>setClockVisible(!clockVisible);
 $('wxSun').onclick=()=>{setWeather('sunny');closeWxWheel()};
