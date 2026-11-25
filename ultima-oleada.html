@@ -553,6 +553,83 @@ const hsU=(x,y,s)=>{let h=(x*374761393+y*668265263+s*982451653)>>>0;h=((h^(h>>>1
    0 pradera, 1 desierto, 2 ciudad, 3 jungla, 4 bosque, 5 pantano. */
 const BIOMES=[{id:1,cx:150,cy:130,r:110},{id:2,cx:320,cy:110,r:120},{id:3,cx:130,cy:320,r:110},{id:4,cx:320,cy:320,r:115},{id:5,cx:480,cy:250,r:100}];
 const LAKE={cx:450,cy:400,rx:45,ry:30};
+/* --- LAGO, ARROYO Y POZAS: FORMAS SUAVES POR ÁNGULO (v2026-11-24b) --- */
+/* Como la costa del mar (islandR/coastPath): el agua se define por una
+   forma suave, NO por baldosas. El radio según el ángulo polar es una
+   elipse + suma de senos con fases fijas: irregular y asimétrica, sin
+   esquinas cuadradas. La MISMA función genera las baldosas de agua y
+   el path del borde, así que el borde sigue exactamente la forma del
+   agua. Determinista por semilla: el lago usa fases fijas y las pozas
+   derivan sus fases de hs() (nunca rnd() en la forma ni en el pintado:
+   un rnd() aquí desplazaría el flujo de rnd() y cambiaría la ciudad,
+   que se genera después). */
+const lakeW=[[2,.10,0.7],[3,.07,2.1],[5,.05,4.0]];
+const lakeWobMax=1+lakeW[0][1]+lakeW[1][1]+lakeW[2][1];
+function lakeWob(a){let w=1;for(const q of lakeW)w+=q[1]*Math.sin(q[0]*a+q[2]);return w}
+/* Radio del lago en px, ángulo polar a (como islandR). */
+function lakeR(a){const c=Math.cos(a),s=Math.sin(a);return lakeWob(a)/Math.sqrt((c*c)/(LAKE.rx*LAKE.rx*T*T)+(s*s)/(LAKE.ry*LAKE.ry*T*T))}
+/* Path suave del lago, desplazado `off` px hacia fuera por el rayo
+   (como coastPath). Las tres funciones TRAZAN en el path actual, sin
+   beginPath: el que llama lo hace antes, así se pueden combinar
+   varios subpaths en un solo clip (p. ej. rectángulo menos lago). */
+function lakePath(c,off){const N=96;for(let i=0;i<=N;i++){const a=i/N*6.283185307,r=lakeR(a)+off,x=LAKE.cx*T+Math.cos(a)*r,y=LAKE.cy*T+Math.sin(a)*r;if(i===0)c.moveTo(x,y);else c.lineTo(x,y)}c.closePath()}
+/* ¿El centro de la baldosa (tx,ty) queda dentro de la forma del lago?
+   Es el mismo test que genera las baldosas 43 del lago. El ángulo es el
+   POLAR (atan2 de dx,dy en px), igual que lakePath/lakeR: con el ángulo
+   elíptico (dx/rx,dy/ry) el wobble se evaluaba en otro ángulo y la forma
+   de M discrepaba del path hasta ~100 px (anillo tapado en el NE). */
+function lakeIn(tx,ty){const dx=(tx+0.5-LAKE.cx)*T,dy=(ty+0.5-LAKE.cy)*T;return Math.hypot(dx,dy)<lakeR(Math.atan2(dy,dx))}
+/* Pozas moradas del pantano: {cx,cy,r,w} en baldosas (centro en
+   coordenadas de baldosa, w como lakeW). Se rellenan en buildMap. */
+let swampPools=[];
+function poolWob(p,a){let w=1;for(const q of p.w)w+=q[1]*Math.sin(q[0]*a+q[2]);return w}
+function poolR(p,a){return poolWob(p,a)*p.r*T}
+function poolPath(c,p,off){const N=48;for(let i=0;i<=N;i++){const a=i/N*6.283185307,r=poolR(p,a)+off,x=p.cx*T+Math.cos(a)*r,y=p.cy*T+Math.sin(a)*r;if(i===0)c.moveTo(x,y);else c.lineTo(x,y)}c.closePath()}
+function poolIn(p,tx,ty){const dx=(tx+0.5-p.cx)/p.r,dy=(ty+0.5-p.cy)/p.r;return Math.hypot(dx,dy)<poolWob(p,Math.atan2(dy,dx))}
+/* Arroyo: filas de baldosas 43 [y,x0,x1] (se rellenan en buildMap).
+   streamPoly traza la banda suave que las cubre: bordes izquierdo y
+   derecho por fila, suavizados con media móvil de 3 y ensanchados
+   MARGEN baldosa para que ninguna baldosa de agua quede fuera; `off`
+   ensancha la banda (anillo de arena). La banda se prolonga MARGEN
+   por arriba (manantial) y por abajo (desembocadura en el lago). */
+let streamRows=[];
+const STREAM_MARGIN=0.7;
+function streamPoly(c,off){
+ const n=streamRows.length;if(!n)return;
+ const m=STREAM_MARGIN*T+off;
+ const lx=[],rx=[];
+ for(let i=0;i<n;i++){const r=streamRows[i];lx.push(r[1]*T-m);rx.push((r[2]+1)*T+m)}
+ const sm=(a,i)=>i<=0?(a[0]+a[1])/2:i>=a.length-1?(a[a.length-2]+a[a.length-1])/2:(a[i-1]+a[i]+a[i+1])/3;
+ const y0=streamRows[0][0]*T-m,y1=(streamRows[n-1][0]+1)*T+m;
+ c.moveTo(sm(lx,0),y0);
+ for(let i=1;i<n;i++)c.lineTo(sm(lx,i),streamRows[i][0]*T);
+ c.lineTo(sm(lx,n-1),y1);
+ for(let i=n-1;i>=0;i--)c.lineTo(sm(rx,i),streamRows[i][0]*T);
+ c.lineTo(sm(rx,0),y0);
+ c.closePath();
+}
+/* ¿La baldosa (tx,ty) está pegada a la orilla del lago / del arroyo /
+   de una poza? Se usa en paintTileDraw para recortar las baldosas de
+   tierra a FUERA de la forma suave (con su anillo): ningún cuadrado
+   de hierba o pantano tapa el borde ni muerde el agua. El test es
+   barato: primero la caja, luego la distancia al contorno. */
+function lakeNear(tx,ty){
+ if(tx<LAKE.cx-LAKE.rx*lakeWobMax-3||tx>LAKE.cx+LAKE.rx*lakeWobMax+3||ty<LAKE.cy-LAKE.ry*lakeWobMax-3||ty>LAKE.cy+LAKE.ry*lakeWobMax+3)return false;
+ const dx=(tx+0.5-LAKE.cx)*T,dy=(ty+0.5-LAKE.cy)*T;
+ return Math.abs(Math.hypot(dx,dy)-lakeR(Math.atan2(dy,dx)))<96}
+function streamNear(tx,ty){
+ if(!streamRows.length)return false;
+ const y0=streamRows[0][0];
+ for(let j=Math.max(0,ty-1-y0);j<=Math.min(streamRows.length-1,ty+1-y0);j++){const r=streamRows[j];if(tx>=r[1]-2&&tx<=r[2]+2)return true}
+ return false}
+function poolsNear(tx,ty){
+ const out=[];
+ for(const p of swampPools){
+  const pw=1+p.w[0][1]+p.w[1][1];
+  if(tx<p.cx-p.r*pw-3||tx>p.cx+p.r*pw+3||ty<p.cy-p.r*pw-3||ty>p.cy+p.r*pw+3)continue;
+  const dx=(tx+0.5-p.cx)/p.r,dy=(ty+0.5-p.cy)/p.r;
+  if(Math.abs(Math.hypot(dx,dy)-poolWob(p,Math.atan2(dy,dx)))<0.8)out.push(p)}
+ return out}
 let BM=null;
 const biomeAt=(x,y)=>{let best=0,bv=0;for(const b of BIOMES){const d=Math.hypot(x-b.cx,y-b.cy);const inf=Math.max(0,1-d/b.r)+(hs(x,y,777+b.id)-0.5)*0.35;if(inf>bv){bv=inf;best=b.id}}return bv>0.05?best:0};
 /* findBiomeSpawn(id): baldosa de aparición dentro de un bioma, para la
@@ -741,7 +818,7 @@ function buildMap(seed){
  rs=mapSeed;MW=600;MH=600;
  M=[];for(let y=0;y<MH;y++)M[y]=new Array(MW).fill(19);
  bFacing.clear();bFloors.clear();bShop.clear();cityBlocks=[];
- landTiles=[];
+ landTiles=[];streamRows=[];swampPools=[];
  const cx=MW/2,cy=MH/2;
  /* Isla: forma SUAVE por ángulo (elipse + senos de la semilla). La costa
     es una curva irregular; el mar es una sola masa, no tiles. */
@@ -786,11 +863,14 @@ function buildMap(seed){
     pantano; ciudad, jungla, bosque y pradera quedan en hierba (la ciudad
     pone su asfalto en la fase de calles). */
  for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){if(M[y][x]!==0)continue;if(x>=cityX0&&x<=cityX1&&y>=cityY0&&y<=cityY1)continue;const b=BM[y*MW+x];if(b===1)M[y][x]=32;else if(b===5)M[y][x]=41}
- /* --- LAGO (elipse de agua 43, borde irregular por ruido) --- */
- for(let y=LAKE.cy-LAKE.ry-2;y<=LAKE.cy+LAKE.ry+2;y++)for(let x=LAKE.cx-LAKE.rx-2;x<=LAKE.cx+LAKE.rx+2;x++){
+ /* --- LAGO (agua 43, forma suave por ángulo, v2026-11-24b) --- */
+ /* El mismo lakeIn() que dibuja el borde (lakePath): la forma es una
+    elipse irregular y asimétrica (senos por ángulo), no una elipse
+    simétrica con ruido por baldosa. */
+ const lkRx=Math.ceil(LAKE.rx*lakeWobMax)+2,lkRy=Math.ceil(LAKE.ry*lakeWobMax)+2;
+ for(let y=LAKE.cy-lkRy;y<=LAKE.cy+lkRy;y++)for(let x=LAKE.cx-lkRx;x<=LAKE.cx+lkRx;x++){
   if(x<1||y<1||x>=MW-1||y>=MH-1)continue;
-  const nx=(x-LAKE.cx)/LAKE.rx,ny=(y-LAKE.cy)/LAKE.ry,wob=1+(hs(x,y,888)-0.5)*0.18;
-  if(nx*nx+ny*ny<wob&&M[y][x]!==19)M[y][x]=43}
+  if(lakeIn(x,y)&&M[y][x]!==19)M[y][x]=43}
  /* --- ARROYO con cascada (desde el norte hasta el lago, agua 43) --- */
  let streamX=LAKE.cx,prevSX=null;
  const streamTopY=LAKE.cy-LAKE.ry-60,streamPath=[];
@@ -802,6 +882,7 @@ function buildMap(seed){
      desplaza >1 tile entre filas, quedaba hierba en medio y el arroyo
      se cortaba en tramos (no llegaba al lago). */
   const x0=prevSX===null?streamX-1:Math.min(prevSX,streamX)-1,x1=prevSX===null?streamX:Math.max(prevSX,streamX);
+  streamRows.push([y,x0,x1]); /* fila del arroyo, para su banda suave */
   for(let xx=x0;xx<=x1;xx++)if(xx>=1&&xx<MW-1&&y>=1&&y<MH-1&&M[y][xx]!==19)M[y][xx]=43;
   prevSX=streamX;
  }
@@ -842,10 +923,15 @@ function buildMap(seed){
   if(px<2||py<2||px>=MW-2||py>=MH-2)continue;
   if(BM[py*MW+px]!==5||M[py][px]!==41)continue;
   const pr=2+(rnd()*3|0);
-  for(let j=py-pr;j<=py+pr;j++)for(let i=px-pr;i<=px+pr;i++){
+  /* Forma de la poza: senos por ángulo con fases de hs() (nunca rnd():
+     el flujo de rnd() debe seguir intacto para la ciudad). La misma
+     poolIn() genera las baldosas y dibuja el borde (poolPath). */
+  const pd={cx:px+0.5,cy:py+0.5,r:pr,w:[[2,.10+hs(px,py,901)*.08,hs(px,py,902)*6.283],[3,.07+hs(px,py,903)*.06,hs(px,py,904)*6.283]]};
+  swampPools.push(pd);
+  const prM=Math.ceil(pr*1.35)+1;
+  for(let j=py-prM;j<=py+prM;j++)for(let i=px-prM;i<=px+prM;i++){
    if(i<1||j<1||i>=MW-1||j>=MH-1)continue;
-   const d=Math.hypot(i-px,j-py);
-   if(d<pr+(hs(i,j,892)-0.5)*1.5&&M[j][i]===41)M[j][i]=40}
+   if(poolIn(pd,i,j)&&M[j][i]===41)M[j][i]=40}
   pools++}
  /* --- CIUDAD EN RUINAS (arriba): red de calles con MANZANAS (v2026-11-24b) --- */
  /* Referencias: plano de Manhattan (Commissioners' Plan, 1811) — calles y
@@ -1847,6 +1933,7 @@ function paintChunk(cx,cy){
  try{
   mc.save();mc.translate(-ox,-oy);
   paintSeaAndIsland(ox,oy,ox+CHPX,oy+CHPX);
+  paintWaterBodies(ox,oy,ox+CHPX,oy+CHPX);
   const x0=cx*CH,tx1=Math.min(MW-1,(cx+1)*CH-1);
   const y0=cy*CH,ty1=Math.min(MH-1,(cy+1)*CH+2);
   for(let ty=y0;ty<=ty1;ty++)for(let tx=x0;tx<=tx1;tx++)paintTileDraw(tx,ty);
@@ -1933,6 +2020,44 @@ function paintSeaAndIsland(x0,y0,x1,y1){
   mc.fillStyle=g;mc.beginPath();mc.arc(b.x,b.y,b.r,0,6.29);mc.fill()}
  /* Espuma estatica en la costa (la animada se dibuja en render). */
  coastPath(mc,0);mc.strokeStyle='rgba(190,225,245,0.28)';mc.lineWidth=3;mc.stroke();
+}
+/* Bordes del lago, el arroyo y las pozas (v2026-11-24b): como el mar, el
+   agua se pinta como FORMA SUAVE, no por baldosas: primero el anillo
+   del borde (arena en el lago y el arroyo, barro oscuro en las pozas),
+   luego el agua lisa dentro del contorno, con un filete en el borde.
+   Las baldosas solo añaden destellos/burbujas encima (recortadas a la
+   forma en paintTileDraw). Solo se pintan los cuerpos que intersectan
+   el rectángulo del trozo. */
+const LAKE_SAND_W=12,STREAM_SAND_W=12,POOL_MUD_W=10;
+function paintWaterBodies(x0,y0,x1,y1){
+ /* Lago azul: anillo de arena (la misma arena de la playa) + agua lisa. */
+ const lx0=LAKE.cx*T-LAKE.rx*T*lakeWobMax-LAKE_SAND_W-4,lx1=LAKE.cx*T+LAKE.rx*T*lakeWobMax+LAKE_SAND_W+4;
+ const ly0=LAKE.cy*T-LAKE.ry*T*lakeWobMax-LAKE_SAND_W-4,ly1=LAKE.cy*T+LAKE.ry*T*lakeWobMax+LAKE_SAND_W+4;
+ if(lx0<x1&&lx1>x0&&ly0<y1&&ly1>y0){
+  mc.beginPath();lakePath(mc,LAKE_SAND_W);mc.fillStyle='#c8b078';mc.fill();
+  mc.beginPath();lakePath(mc,0);mc.fillStyle='#2a5a8a';mc.fill();
+  mc.beginPath();lakePath(mc,0);mc.strokeStyle='rgba(190,225,245,0.28)';mc.lineWidth=3;mc.stroke();
+ }
+ /* Arroyo: banda de arena + agua lisa. Se pinta DESPUÉS del lago para
+    que sus orillas corten el anillo en la desembocadura, como una
+    boca natural (el arroyo desemboca en el lago por el norte). */
+ if(streamRows.length){
+  const sx0=(LAKE.cx-13)*T,sx1=(LAKE.cx+13)*T,sy0=(LAKE.cy-LAKE.ry-62)*T,sy1=(LAKE.cy-LAKE.ry+4)*T;
+  if(sx0<x1&&sx1>x0&&sy0<y1&&sy1>y0){
+   mc.beginPath();streamPoly(mc,STREAM_SAND_W);mc.fillStyle='#c8b078';mc.fill();
+   mc.beginPath();streamPoly(mc,0);mc.fillStyle='#2a5a8a';mc.fill();
+  }
+ }
+ /* Pozas moradas: anillo de barro oscuro + agua lisa + filete oscuro. */
+ for(const p of swampPools){
+  const pw=1+p.w[0][1]+p.w[1][1];
+  const px0=(p.cx-p.r*pw)*T-POOL_MUD_W-4,px1=(p.cx+p.r*pw)*T+POOL_MUD_W+4;
+  const py0=(p.cy-p.r*pw)*T-POOL_MUD_W-4,py1=(p.cy+p.r*pw)*T+POOL_MUD_W+4;
+  if(px0>=x1||px1<=x0||py0>=y1||py1<=y0)continue;
+  mc.beginPath();poolPath(mc,p,POOL_MUD_W);mc.fillStyle='#6a4a2a';mc.fill();
+  mc.beginPath();poolPath(mc,p,0);mc.fillStyle='#6a4a8a';mc.fill();
+  mc.beginPath();poolPath(mc,p,0);mc.strokeStyle='rgba(30,20,12,0.5)';mc.lineWidth=2;mc.stroke();
+ }
 }
 /* Pinta el fondo de un tile de tierra (hierba, sendero, asfalto...).
    En la banda de playa no se pinta fondo cuadrado: la arena suave
@@ -2485,10 +2610,45 @@ function paintTileDraw(tx,ty){const t=M[ty][tx];
  const wat=(t===37||t===38||t===39||t===40||t===43);
  if(wat){/* agua y puente: el suelo se recorta a la COSTA (no a la hierba)
    para que el río llegue al mar siguiendo la curva suave; el objeto
-   (cascada, puente) se dibuja sin recorte. */
-  if(Math.hypot(dx,dy)>=islandR(Math.atan2(dy,dx))-SAND_W-24){
+   (cascada, puente) se dibuja sin recorte. Las baldosas de lago (43),
+   arroyo (43) y poza (40) se recortan a SU forma suave (v2026-11-24b):
+   el agua se ve como una masa continua con su borde de arena/barro,
+   no como cuadrados; el puente sobre el lago/arroyo también. */
+  if(t===43||t===40){
+   let clipped=false;
+   mc.save();mc.beginPath();
+   if(t===43){if(lakeIn(tx,ty)){lakePath(mc,0);clipped=true}else if(streamRows.length){streamPoly(mc,0);clipped=true}}
+   else if(swampPools.length){for(const p of swampPools)poolPath(mc,p,0);clipped=true}
+   if(clipped)mc.clip();
+   paintGround(tx,ty);mc.restore();paintObject(tx,ty);
+   return}
+  if(t===38&&(M[ty][tx-1]===43||M[ty][tx+1]===43||(M[ty-1]&&M[ty-1][tx]===43)||(M[ty+1]&&M[ty+1][tx]===43))){
+   mc.save();mc.beginPath();lakePath(mc,0);if(streamRows.length)streamPoly(mc,0);mc.clip();paintGround(tx,ty);mc.restore();paintObject(tx,ty);
+   return}
+ if(Math.hypot(dx,dy)>=islandR(Math.atan2(dy,dx))-SAND_W-24){
    mc.save();coastPath(mc,18);mc.clip();paintGround(tx,ty);mc.restore();paintObject(tx,ty);
   }else{paintGround(tx,ty);paintObject(tx,ty)}
+  return}
+ /* Tierra junto al lago/arroyo/poza (v2026-11-24b): el suelo y el objeto
+    se recortan a FUERA de la forma suave (con su anillo): ningún
+    cuadrado de hierba o pantano tapa el borde ni muerde el agua. El
+    recorte es rectángulo menos agua (evenodd), un clip por cuerpo, que
+    se intersectan: así el solape lago-arroyo en la desembocadura queda
+    bien (con un solo clip evenodd el solape contaría doble y se
+    pintaría). El rectángulo lleva 32 px de margen para que quepa lo
+    que el objeto sobresale de su baldosa; el faro y el mástil, que
+    sobresalen mucho más, se dibujan sin recorte, como en la costa. */
+ const lkN=lakeNear(tx,ty),stN=streamNear(tx,ty),plN=poolsNear(tx,ty);
+ if(lkN||stN||plN.length){
+  const cutWater=()=>{
+   mc.beginPath();mc.rect(tx*T-32,ty*T-32,T+64,T+64);
+   if(lkN)lakePath(mc,LAKE_SAND_W);
+   mc.clip('evenodd');
+   if(stN){mc.beginPath();mc.rect(tx*T-32,ty*T-32,T+64,T+64);streamPoly(mc,STREAM_SAND_W);mc.clip('evenodd')}
+   for(const p of plN){mc.beginPath();mc.rect(tx*T-32,ty*T-32,T+64,T+64);poolPath(mc,p,POOL_MUD_W);mc.clip('evenodd')}};
+  mc.save();cutWater();paintGround(tx,ty);mc.restore();
+  if(t===28||t===29)paintObject(tx,ty);
+  else{mc.save();cutWater();paintObject(tx,ty);mc.restore()}
   return}
  if(Math.hypot(dx,dy)>=islandR(Math.atan2(dy,dx))-SAND_W-24){
   mc.save();coastPath(mc,-SAND_W);mc.clip();paintGround(tx,ty);mc.restore();
@@ -2710,7 +2870,7 @@ function setMenuMusic(){try{if(typeof Audio==='undefined')return;if(!menuMusic){
 /* Insignia GOD MODE: en la tienda va sobre el hueco octagonal de la imagen;
    fuera de la tienda, en su sitio habitual (abajo a la izquierda). */
 function syncGodBadge(){try{const inShop=st==='shop';$('godMode').hidden=!godMode||inShop;$('shGod').style.display=(godMode&&inShop)?'flex':'none';syncSpeedBadge()}catch(e){}}
-function finishWave(){waveSpawned=waveTotal;for(const z of Z){if(!z.dead){z.hp=0;z.dead=1}}reap();waveClear()}
+function finishWave(){waveSpawned=waveTotal;hordeQueue.length=0;for(const z of Z){if(!z.dead){z.hp=0;z.dead=1}}reap();waveClear()}
 let Pk=[],Sp=[],Bo=[],Dm=[],streak=0,streakT=0,rec={bestWave:0,bestKills:0,bestMoney:0},tileHp={};
 const K={l:0,r:0,u:0,d:0,sh:0},PD={x:0,y:0,rx:0,ry:0,fire:0,run:0,rl:0,start:0};
 const toast=t=>{$('toast').textContent=t;clearTimeout(tt);tt=setTimeout(()=>$('toast').textContent='',1800)};
@@ -2720,7 +2880,7 @@ const toast=t=>{$('toast').textContent=t;clearTimeout(tt);tt=setTimeout(()=>$('t
    findBiomeSpawn(biome) (la añade la fase de la ciudad en world.js).
    Respaldo: si findBiomeSpawn falta o no encuentra baldosa caminable,
    se empieza en la playa sur de siempre. Sin biome (o 'playa'), igual. */
-function newGame(seed,biome){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;let sx=spawnTX,sy=spawnTY;if(biome&&biome!=='playa'&&typeof findBiomeSpawn==='function'){const s=findBiomeSpawn(biome);if(s&&typeof s[0]==='number'&&typeof s[1]==='number'&&M[s[1]]&&WALK_T.includes(M[s[1]][s[0]])){sx=s[0];sy=s[1]}}P={x:sx*T+16,y:sy*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];Dm=[];tileHp={};streak=0;streakT=0;godMode=false;superSpeed=0;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=wxInterval();Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();decals.length=0;chunkCache.clear();$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=$('save').hidden=$('saveConfirm').hidden=$('biome').hidden=true;startWave(1);$('wrap').focus();setMenuMusic();syncGodBadge()}
+function newGame(seed,biome){buildMap(seed);Limbs.length=0;deathT=0;deathDelay=0;let sx=spawnTX,sy=spawnTY;if(biome&&biome!=='playa'&&typeof findBiomeSpawn==='function'){const s=findBiomeSpawn(biome);if(s&&typeof s[0]==='number'&&typeof s[1]==='number'&&M[s[1]]&&WALK_T.includes(M[s[1]][s[0]])){sx=s[0];sy=s[1]}}P={x:sx*T+16,y:sy*T+16,hp:100,st:100,ammo:12,rl:0,cd:0,dir:2,ph:0,fl:0,hu:0,sd:0,wi:0,own:[1,0,0,0,1],mag:[12,0,0,0,0],res:[48,0,0,0,0],arm:0,upg:{dmg:[0,0,0,0,0],mag:[0,0,0,0,0],rel:[0,0,0,0,0]},dashCd:0,dashT:0,dashX:0,dashY:1,dead:false,dying:false,dismembered:false};Z=[];Bu=[];Pa=[];Pk=[];Sp=[];Bo=[];Dm=[];tileHp={};hordeQueue=[];hordeCap=HORDE_CAP_BASE;hordeFpsT=0;hordeFpsN=0;hordeFpsLowT=0;hordeFpsOkT=0;streak=0;streakT=0;godMode=false;superSpeed=0;$('godMode').hidden=true;gameMin=420;weather='sunny';wxT=wxInterval();Wx=[];wxAcc=0;thunderT=rr(8,18);flash=0;bolt=null;wxWheelOpen=false;timePanelOpen=false;setRainSound();kills=0;money=0;bought=[];hotbar=[{id:'fist',n:1},{id:'pistol',n:1},null,null,null,null];sel=1;renderHotbar();renderRec();decals.length=0;chunkCache.clear();$('menu').hidden=$('dead').hidden=$('shop').hidden=$('pause').hidden=$('controls').hidden=$('options').hidden=$('exit').hidden=$('help').hidden=true;$('wxWheel').hidden=$('timePanel').hidden=$('save').hidden=$('saveConfirm').hidden=$('biome').hidden=true;startWave(1);$('wrap').focus();setMenuMusic();syncGodBadge()}
 /* ---------- OLEADAS (dificultad Normal: crece de forma constante) ---------- */
 /* Oleada n trae 6+n*4 zombis (10, 14, 18...), aparecen más rápido y más
    juntos cuanto más alta es la oleada; los corredores e hinchados son
@@ -2770,10 +2930,64 @@ function farSpawn(){const p=randSpawnPoint();return p||[spawnTX*T+16,spawnTY*T+1
 function sampleBiomePoint(noCity){for(let i=0;i<40;i++){const bid=(rnd()*6)|0;let tx,ty;if(bid===0){tx=1+((rnd()*(MW-2))|0);ty=1+((rnd()*(MH-2))|0)}else{const b=BIOMES[bid-1],a=rnd()*6.283185307,r=Math.sqrt(rnd())*b.r;tx=Math.floor(b.cx+Math.cos(a)*r);ty=Math.floor(b.cy+Math.sin(a)*r)}if(tx<1||ty<1||tx>=MW-1||ty>=MH-1)continue;if(noCity&&tx>=CITY_RECT.x0&&tx<=CITY_RECT.x1&&ty>=CITY_RECT.y0&&ty<=CITY_RECT.y1)continue;if(!WALK_T.includes(M[ty][tx]))continue;if(blk(tx*T+16,ty*T+16))continue;return[tx*T+16,ty*T+16]}return null}
 function sampleCityPoint(){for(let i=0;i<40;i++){const tx=CITY_RECT.x0+((rnd()*(CITY_RECT.x1-CITY_RECT.x0+1))|0),ty=CITY_RECT.y0+((rnd()*(CITY_RECT.y1-CITY_RECT.y0+1))|0);if(!WALK_T.includes(M[ty][tx]))continue;if(blk(tx*T+16,ty*T+16))continue;return[tx*T+16,ty*T+16]}return null}
 function distSpawnPoint(){if(zombieDist==='personaje')return randSpawnPoint();if(zombieDist==='ciudad'){if(rnd()<.7){const c=sampleCityPoint();if(c)return c}return sampleBiomePoint(true)||randSpawnPoint()}return sampleBiomePoint(false)||randSpawnPoint()}
-function startWave(n){wave=n;waveTotal=Math.max(1,Math.round((6+n*4)*DIFF[diff].wv*densityMult(n)));waveSpawned=0;spawnT=.5;st='play';placeCrates();placeMetalCrates();placeCardboard();placeMilitary();placeBarrels();
+function startWave(n){wave=n;waveTotal=Math.max(1,Math.round((6+n*4)*DIFF[diff].wv*densityMult(n)));waveSpawned=0;hordeQueue=[];spawnT=.5;st='play';placeCrates();placeMetalCrates();placeCardboard();placeMilitary();placeBarrels();
  if(n%5===0){waveTotal+=1;waveSpawned=1;const bp=farSpawn(),c=ZT[5];Z.push({x:bp[0],y:bp[1],t:5,hp:c.hp*DIFF[diff].hp,sp:rr(c.sp[0],c.sp[1])*(1+Math.min(wave*.02,.25)),ph:rnd()*6,at:0,kx:0,ky:0,f:0,dir:2,side:1,g:rr(2,8),lc:99,lg:0,slow:0,sc:0,dm:{arm:0,leg:0,head:0},lastW:0});toast('¡JEFE! · OLEADA '+n)}else toast('OLEADA '+n)}
 function waveClear(){const b=25+wave*5;money+=b;updateRec();openSaveScreen()}
-function spawnZ(){for(let i=0;i<30;i++){const pt=distSpawnPoint();if(!pt)continue;const x=pt[0],y=pt[1];{const q=rnd(),rC=Math.min(.22+wave*.02,.35),bC=rC+Math.min(.16+wave*.015,.28),tC=bC+(wave>=3?Math.min(.04+(wave-3)*.02,.12):0),sC=tC+(wave>=1?Math.min(.03+(wave-1)*.015,.10):0),eC=sC+(wave>=2?Math.min(.05+(wave-2)*.015,.12):0),t=q<rC?1:q<bC?2:q<tC?3:q<sC?4:q<eC?6:0,c=ZT[t];Z.push({x,y,t,hp:c.hp*DIFF[diff].hp,sp:rr(c.sp[0],c.sp[1])*(1+Math.min(wave*.02,.25)),ph:rnd()*6,at:0,kx:0,ky:0,f:0,dir:2,side:rnd()<.5?-1:1,g:rr(2,8),lc:rr(0,1.5),lg:0,slow:0,sc:rr(1,2),dm:{arm:0,leg:0,head:0},lastW:0});return true}}return false}
+/* ---------- HORDAS EN GRUPOS (v2026-11-24b) ---------- */
+/* Los zombis ya no salen de uno en uno: salen en GRUPOS de 8-12 juntos
+   en el mismo punto (a 30-80 px del centro del grupo), un grupo por
+   tanda, cada vez más seguido cuanto más alta es la oleada. El tope de
+   vivos en pantalla es 120: si se llega al tope, los que faltan esperan
+   en hordeQueue (COLA) y salen a medida que el jugador mata. waveSpawned
+   solo avanza cuando el zombi se genera de verdad (nunca al encolarlo),
+   así el contador del HUD y el fin de oleada siguen correctos.
+   AUTOAJUSTE: si los FPS bajan de 45 sostenidos 2 s, el tope baja 20
+   (mín. 40); si vuelven a 55+ sostenidos 5 s, el tope sube 20 (máx. 120).
+   El JEFE sigue solo con farSpawn (startWave) y la densidad sigue
+   mandando el TOTAL por oleada (waveTotal, sin tocar). */
+const HORDE_MIN=8,HORDE_MAX=12;
+const HORDE_CAP_BASE=120,HORDE_CAP_MIN=40,HORDE_CAP_STEP=20;
+const HORDE_FPS_LOW=45,HORDE_FPS_OK=55;
+let hordeQueue=[],hordeCap=HORDE_CAP_BASE;
+let hordeFpsT=0,hordeFpsN=0,hordeFpsLowT=0,hordeFpsOkT=0;
+function hordeFpsTick(dt){hordeFpsT+=dt;hordeFpsN++;
+ if(hordeFpsT>=1){const fps=hordeFpsN/hordeFpsT;hordeFpsT=0;hordeFpsN=0;
+  if(fps<HORDE_FPS_LOW){hordeFpsLowT++;hordeFpsOkT=0;
+   if(hordeFpsLowT>=2){hordeCap=Math.max(HORDE_CAP_MIN,hordeCap-HORDE_CAP_STEP);hordeFpsLowT=0}}
+  else if(fps>=HORDE_FPS_OK){hordeFpsOkT++;hordeFpsLowT=0;
+   if(hordeFpsOkT>=5){hordeCap=Math.min(HORDE_CAP_BASE,hordeCap+HORDE_CAP_STEP);hordeFpsOkT=0}}
+  else{hordeFpsLowT=0;hordeFpsOkT=0}}}
+/* Tamaño del grupo: 8-12, salvo el último grupo de la oleada, que toma
+   el resto. Se evita dejar un resto de 1-7 o de 13-15 (el grupo anterior
+   se ajusta para dejar 8, 12 o 16 al último); solo una oleada entera de
+   13-15 zombis (p. ej. oleada 2 con densidad 10: 14) sale como un único
+   grupo de 13-15, porque no se puede partir en grupos de 8-12. */
+function hordeGroupSize(rem){if(rem<=HORDE_MAX)return rem;
+ let s=HORDE_MIN+((rnd()*5)|0);const left=rem-s;
+ if(left>0&&left<HORDE_MIN)s=rem-HORDE_MIN;
+ else if(left>=13&&left<=15){if(rem>=20&&rem<=24)s=rem-12;else s=rem-16}
+ if(s<HORDE_MIN)s=rem;return s}
+/* Punto de un miembro del grupo: 30-80 px del centro, en tile
+   caminable y sin bloque; si no hay sitio, el centro del grupo. */
+function hordeMemberPoint(cx,cy){for(let i=0;i<8;i++){const a=rnd()*6.283185307,d=30+rnd()*50;
+  const x=cx+Math.cos(a)*d,y=cy+Math.sin(a)*d;
+  const tx=Math.floor(x/T),ty=Math.floor(y/T);
+  if(tx<1||ty<1||tx>=MW-1||ty>=MH-1)continue;
+  if(!WALK_T.includes(M[ty][tx]))continue;
+  if(blk(x,y))continue;return[x,y]}return[cx,cy]}
+/* Forma un grupo: elige UN punto con distSpawnPoint (respeta la
+   distribución actual) y encola sus miembros. Devuelve cuántos encoló. */
+function enqueueHordeGroup(){const rem=waveTotal-waveSpawned-hordeQueue.length;
+ if(rem<=0)return 0;const pt=distSpawnPoint();if(!pt)return 0;
+ const n=hordeGroupSize(rem);
+ for(let i=0;i<n;i++){const m=hordeMemberPoint(pt[0],pt[1]);hordeQueue.push({x:m[0],y:m[1]})}
+ return n}
+/* Saca de la cola mientras haya hueco bajo el tope. Solo aquí avanza
+   waveSpawned: el zombi cuenta cuando nace de verdad. */
+function drainHordeQueue(){while(hordeQueue.length&&Z.length<hordeCap){
+ const j=hordeQueue.shift();if(spawnZAt(j.x,j.y))waveSpawned++}}
+function spawnZAt(x,y){const q=rnd(),rC=Math.min(.22+wave*.02,.35),bC=rC+Math.min(.16+wave*.015,.28),tC=bC+(wave>=3?Math.min(.04+(wave-3)*.02,.12):0),sC=tC+(wave>=1?Math.min(.03+(wave-1)*.015,.10):0),eC=sC+(wave>=2?Math.min(.05+(wave-2)*.015,.12):0),t=q<rC?1:q<bC?2:q<tC?3:q<sC?4:q<eC?6:0,c=ZT[t];Z.push({x,y,t,hp:c.hp*DIFF[diff].hp,sp:rr(c.sp[0],c.sp[1])*(1+Math.min(wave*.02,.25)),ph:rnd()*6,at:0,kx:0,ky:0,f:0,dir:2,side:rnd()<.5?-1:1,g:rr(2,8),lc:rr(0,1.5),lg:0,slow:0,sc:rr(1,2),dm:{arm:0,leg:0,head:0},lastW:0});return true}
+function spawnZ(){for(let i=0;i<30;i++){const pt=distSpawnPoint();if(!pt)continue;return spawnZAt(pt[0],pt[1])}return false}
 const blk=(x,y)=>sol(x-6,y-5)||sol(x+6,y-5)||sol(x-6,y+2)||sol(x+6,y+2);
 const mv=(e,dx,dy)=>{if(!blk(e.x+dx,e.y+dy)){e.x+=dx;e.y+=dy;return 1}return 0};
 /* Mover en pasos de máx 16 px: mv solo comprueba el DESTINO, y a 2500 px/s
@@ -3228,8 +3442,9 @@ function upd(dt){pad();
  if(dev==='kb')aim=Math.atan2(my-py,mx-px);else if(Math.hypot(PD.rx,PD.ry)>.3)aim=Math.atan2(PD.ry,PD.rx);else if(moving&&!PD.rx&&!PD.ry&&dev==='pad')aim=Math.atan2(iy,ix);
  P.dir=d4(Math.cos(aim),Math.sin(aim));P.cd-=dt;P.fl-=dt;P.hu-=dt;if(P.rl>0){P.rl-=dt;if(P.rl<=0){P.rl=0;const w=WP[P.wi];if(godMode)P.ammo=effMag(P.wi);else{const take=Math.min(effMag(P.wi)-P.ammo,P.res[P.wi]);P.ammo+=take;P.res[P.wi]-=take}}}
  if((md&&dev==='kb')||PD.fire)shoot();
- spawnT-=dt;const maxA=Math.min(6+wave,14),iv=Math.max(1.2,2.6-wave*.15);
- if(waveSpawned<waveTotal&&Z.length<maxA&&spawnT<=0){if(spawnZ())waveSpawned++;spawnT=iv}
+ spawnT-=dt;hordeFpsTick(dt);const iv=Math.max(.55,1.5-wave*.07);
+ if(spawnT<=0){spawnT=iv;enqueueHordeGroup()}
+ drainHordeQueue();
  for(const z of Z){let dx=P.x-z.x,dy=P.y-z.y,d=Math.hypot(dx,dy)||1,vx=dx/d,vy=dy/d;
   for(const o of Z)if(o!==z){const ox=z.x-o.x,oy=z.y-o.y,od=Math.hypot(ox,oy);if(od>0&&od<14){vx+=ox/od*.6;vy+=oy/od*.6}}
   z.lc-=dt;if(z.t===1&&d<130&&d>25&&z.lc<=0){z.lg=.4;z.lc=2.2;sScr()}z.lg-=dt;if(z.slow>0)z.slow-=dt;const s=z.sp*DIFF[diff].sp*dt*(z.lg>0?1.9:1)*(z.slow>0?.5:1),a=mv(z,vx*s,0),b=mv(z,0,vy*s);if(!a&&!b){if(!mv(z,-vy*s,vx*s)&&!mv(z,vy*s,-vx*s)&&!mv(z,-s,0)&&!mv(z,s,0)&&!mv(z,0,-s))mv(z,0,s)}else if(!a&&Math.abs(vy)<.5){if(!mv(z,0,s)&&!mv(z,0,-s))mv(z,-s,0)}
